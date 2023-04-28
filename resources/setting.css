@@ -3,4 +3,6 @@ html {
   line-height: 1.15;
 }
 
+.table thead th{border-top: 0;}
+
 #logo{height: 40px;}

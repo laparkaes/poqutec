@@ -8,7 +8,12 @@
     <title>Poqutec - CRM</title>
     <link rel="icon" type="image/png" sizes="16x16" href="resources/images/logo.png">
 	<link rel="stylesheet" href="resources/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="resources/fontawesome/css/all.min.css">
 	<link rel="stylesheet" href="resources/setting.css">
+	<script src="resources/jquery-3.6.4.min.js"></script>
+	<script src="resources/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="resources/fontawesome/js/all.min.js"></script>
+	<script src="resources/setting.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -80,7 +85,7 @@
 									<td>Maritime</td>
 									<td>2023-04-11</td>
 									<td>2023-05-24</td>
-									<td>Payment</td>
+									<td class="text-warning">Payment</td>
 								</tr>
 								<tr>
 									<td>2023-04-23</td>
@@ -92,7 +97,7 @@
 									<td>Air</td>
 									<td>2023-04-11</td>
 									<td>2023-05-24</td>
-									<td>Payment</td>
+									<td class="text-primary">Preparing</td>
 								</tr>
 								<tr>
 									<td>2023-04-23</td>
@@ -104,7 +109,7 @@
 									<td>Air</td>
 									<td>2023-04-11</td>
 									<td>2023-05-24</td>
-									<td>Payment</td>
+									<td class="text-info">Shipment</td>
 								</tr>
 								<tr>
 									<td>2023-04-23</td>
@@ -116,7 +121,7 @@
 									<td>Maritime</td>
 									<td>2023-04-11</td>
 									<td>2023-05-24</td>
-									<td>Payment</td>
+									<td class="text-success">Finished</td>
 								</tr>
 							</tbody>
 						</table>
@@ -184,6 +189,7 @@
 									<th scope="col">Date</th>
 									<th scope="col">Country</th>
 									<th scope="col">Company</th>
+									<th scope="col">Status</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -191,26 +197,31 @@
 									<td>2023-04-23</td>
 									<td>Canada</td>
 									<td class="text-truncate">Some construction company</td>
+									<td class="text-danger">Pending</td>
 								</tr>
 								<tr>
 									<td>2023-04-23</td>
 									<td>Canada</td>
 									<td>Some construction company</td>
+									<td class="text-danger">Pending</td>
 								</tr>
 								<tr>
 									<td>2023-04-23</td>
 									<td>Canada</td>
 									<td>Some construction company</td>
+									<td class="text-danger">Pending</td>
 								</tr>
 								<tr>
 									<td>2023-04-23</td>
 									<td>Canada</td>
 									<td>Some construction company</td>
+									<td class="text-success">Attended</td>
 								</tr>
 								<tr>
 									<td>2023-04-23</td>
 									<td>Canada</td>
 									<td>Some construction company</td>
+									<td class="text-success">Attended</td>
 								</tr>
 							</tbody>
 						</table>
@@ -220,8 +231,5 @@
 		</div>
 	</div>
 </div>
-<script src="resources/jquery-3.6.4.min.js"></script>
-<script src="resources/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="resources/setting.js"></script>
 </body>
 </html>
