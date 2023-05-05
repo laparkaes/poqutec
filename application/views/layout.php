@@ -6,14 +6,19 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Poqutec - CRM</title>
-    <link rel="icon" type="image/png" sizes="16x16" href="resources/images/logo.png">
-	<link rel="stylesheet" href="resources/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="resources/fontawesome/css/all.min.css">
-	<link rel="stylesheet" href="resources/setting.css">
-	<script src="resources/jquery-3.6.4.min.js"></script>
-	<script src="resources/bootstrap/js/bootstrap.bundle.min.js"></script>
-	<script src="resources/fontawesome/js/all.min.js"></script>
-	<script src="resources/setting.js"></script>
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= base_url() ?>resources/images/logo.png">
+	<link rel="stylesheet" href="<?= base_url() ?>resources/vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="<?= base_url() ?>resources/vendor/fontawesome/css/all.min.css">
+	<link rel="stylesheet" href="<?= base_url() ?>resources/vendor/sweetalert2-11.4.35/dist/sweetalert2.min.css">
+	<link rel="stylesheet" href="<?= base_url() ?>resources/setting.css">
+	<script src="<?= base_url() ?>resources/vendor/jquery-3.6.4.min.js"></script>
+	<script src="<?= base_url() ?>resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="<?= base_url() ?>resources/vendor/fontawesome/js/all.min.js"></script>
+	<script src="<?= base_url() ?>resources/vendor/sweetalert2-11.4.35/dist/sweetalert2.min.js"></script>
+	<script src="<?= base_url() ?>resources/setting.js"></script>
+	<?php if ($init){ ?>
+	<script src="<?= base_url() ?>resources/init/<?= $init ?>"></script>
+	<?php } ?>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -25,22 +30,28 @@
 	</button>
 	<div class="collapse navbar-collapse" id="navbarSupportedContent">
 		<ul class="navbar-nav mr-auto">
-			<li class="nav-item active">
+			<?php if (!strcmp($this->nav_active, "dashboard")) $a = "active"; else $a = ""; ?>
+			<li class="nav-item <?= $a ?>">
 				<a class="nav-link" href="<?= base_url() ?>dashboard">Home</a>
 			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="#">Buyer</a>
+			<?php if (!strcmp($this->nav_active, "buyer")) $a = "active"; else $a = ""; ?>
+			<li class="nav-item <?= $a ?>">
+				<a class="nav-link" href="<?= base_url() ?>buyer/list">Buyer</a>
 			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="#">Product</a>
+			<?php if (!strcmp($this->nav_active, "product")) $a = "active"; else $a = ""; ?>
+			<li class="nav-item <?= $a ?>">
+				<a class="nav-link" href="<?= base_url() ?>product/list">Product</a>
 			</li>
-			<li class="nav-item">
+			<?php if (!strcmp($this->nav_active, "inquiry")) $a = "active"; else $a = ""; ?>
+			<li class="nav-item <?= $a ?>">
 				<a class="nav-link" href="#">Inquiry</a>
 			</li>
-			<li class="nav-item">
+			<?php if (!strcmp($this->nav_active, "sale")) $a = "active"; else $a = ""; ?>
+			<li class="nav-item <?= $a ?>">
 				<a class="nav-link" href="#">Sale</a>
 			</li>
-			<li class="nav-item">
+			<?php if (!strcmp($this->nav_active, "account")) $a = "active"; else $a = ""; ?>
+			<li class="nav-item <?= $a ?>">
 				<a class="nav-link" href="#">Account</a>
 			</li>
 		</ul>
@@ -50,186 +61,7 @@
 		</form>
 	</div>
 </nav>
-<div class="container mt-3">
-	<div class="row">
-		<div class="col-md-12">
-			<div class="card mb-3">
-				<div class="card-header">
-					<h4 class="mb-0">Sales Progress</h4>
-				</div>
-				<div class="card-body">
-					<div class="table-responsive">
-						<table class="table table-sm mb-0">
-							<thead>
-								<tr>
-									<th scope="col">Num</th>
-									<th scope="col">Country</th>
-									<th scope="col">Company</th>
-									<th scope="col">Term</th>
-									<th scope="col">Amount</th>
-									<th scope="col">Freight</th>
-									<th scope="col">Shipment</th>
-									<th scope="col">ETD</th>
-									<th scope="col">ETA</th>
-									<th scope="col">Status</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>2023-04-23</td>
-									<td>Canada</td>
-									<td class="text-truncate">Some construction company</td>
-									<td>FOB</td>
-									<td class="text-nowrap">USD 65,000</td>
-									<td class="text-nowrap">USD 600</td>
-									<td>Maritime</td>
-									<td>2023-04-11</td>
-									<td>2023-05-24</td>
-									<td class="text-warning">Payment</td>
-								</tr>
-								<tr>
-									<td>2023-04-23</td>
-									<td>Canada</td>
-									<td>Some construction company</td>
-									<td>FOB</td>
-									<td>USD 65,000</td>
-									<td>USD 600</td>
-									<td>Air</td>
-									<td>2023-04-11</td>
-									<td>2023-05-24</td>
-									<td class="text-primary">Preparing</td>
-								</tr>
-								<tr>
-									<td>2023-04-23</td>
-									<td>Canada</td>
-									<td>Some construction company</td>
-									<td>FOB</td>
-									<td>USD 65,000</td>
-									<td>USD 600</td>
-									<td>Air</td>
-									<td>2023-04-11</td>
-									<td>2023-05-24</td>
-									<td class="text-info">Shipment</td>
-								</tr>
-								<tr>
-									<td>2023-04-23</td>
-									<td>Canada</td>
-									<td>Some construction company</td>
-									<td>FOB</td>
-									<td>USD 65,000</td>
-									<td>USD 600</td>
-									<td>Maritime</td>
-									<td>2023-04-11</td>
-									<td>2023-05-24</td>
-									<td class="text-success">Finished</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>		
-				</div>
-			</div>
-		</div>
-		<div class="col-md-6 col-sm-12">
-			<div class="card mb-3">
-				<div class="card-header">
-					<h4 class="mb-0">Recent Buyers</h4>
-				</div>
-				<div class="card-body">
-					<div class="table-responsive">
-						<table class="table table-sm mb-0">
-							<thead>
-								<tr>
-									<th scope="col">Date</th>
-									<th scope="col">Country</th>
-									<th scope="col">Company</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>2023-03-11</td>
-									<td>Canada</td>
-									<td class="text-truncate">Some construction company</td>
-								</tr>
-								<tr>
-									<td>2023-03-11</td>
-									<td>Canada</td>
-									<td>Some construction company</td>
-								</tr>
-								<tr>
-									<td>2023-03-11</td>
-									<td>Canada</td>
-									<td>Some construction company</td>
-								</tr>
-								<tr>
-									<td>2023-03-11</td>
-									<td>Canada</td>
-									<td>Some construction company</td>
-								</tr>
-								<tr>
-									<td>2023-03-11</td>
-									<td>Canada</td>
-									<td>Some construction company</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-6 col-sm-12">
-			<div class="card mb-3">
-				<div class="card-header">
-					<h4 class="mb-0">Lastest Inquiries</h4>
-				</div>
-				<div class="card-body">
-					<div class="table-responsive">
-						<table class="table table-sm mb-0">
-							<thead>
-								<tr>
-									<th scope="col">Date</th>
-									<th scope="col">Country</th>
-									<th scope="col">Company</th>
-									<th scope="col">Status</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>2023-04-23</td>
-									<td>Canada</td>
-									<td class="text-truncate">Some construction company</td>
-									<td class="text-danger">Pending</td>
-								</tr>
-								<tr>
-									<td>2023-04-23</td>
-									<td>Canada</td>
-									<td>Some construction company</td>
-									<td class="text-danger">Pending</td>
-								</tr>
-								<tr>
-									<td>2023-04-23</td>
-									<td>Canada</td>
-									<td>Some construction company</td>
-									<td class="text-danger">Pending</td>
-								</tr>
-								<tr>
-									<td>2023-04-23</td>
-									<td>Canada</td>
-									<td>Some construction company</td>
-									<td class="text-success">Attended</td>
-								</tr>
-								<tr>
-									<td>2023-04-23</td>
-									<td>Canada</td>
-									<td>Some construction company</td>
-									<td class="text-success">Attended</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+<div class="container mt-3 pb-5"><?php $this->load->view($main); ?></div>
+<input type="hidden" id="base_url" value="<?= base_url() ?>">
 </body>
 </html>

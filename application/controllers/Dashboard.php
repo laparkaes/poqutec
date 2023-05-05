@@ -3,8 +3,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Dashboard extends CI_Controller {
 
+	public function __construct(){
+		parent::__construct();
+		date_default_timezone_set('Asia/Seoul');
+		//$this->load->model('general_model','general');
+		$this->nav_active = "dashboard";
+	}
+	
 	public function index(){
-		$this->load->view('layout');
+		$view = [
+			"main" => "dashboard/index"
+		];
+		
+		$this->load->view('layout', $view);
 	}
 	
 	public function test(){
