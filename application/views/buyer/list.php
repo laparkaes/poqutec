@@ -1,15 +1,37 @@
 <div class="row">
-	<div class="col-md-6 col-sm-12">
+	<div class="col">
 		<h4>Buyers</h4>
-	</div>
-	<div class="col-md-6 col-sm-12 text-right">
-		<div class="btn-group" role="group" aria-label="Basic example">
-			<a type="button" class="btn btn-primary" href="<?= base_url() ?>buyer/new">New</a>
-			<button type="button" class="btn btn-outline-primary">Export to Excel</button>
-		</div>
 	</div>
 </div>
 <div class="row mt-3">
+	<div class="col d-md-flex justify-content-between">
+		<div class="btn-group mb-2" role="group" aria-label="buyer_options">
+			<a type="button" class="btn btn-primary" href="<?= base_url() ?>buyer/new">New</a>
+			<button type="button" class="btn btn-outline-primary">Export to Excel</button>
+		</div>
+		<form class="form-inline">
+			<input type="hidden" value="1" name="page">
+			<label class="sr-only" for="sl_country">Country</label>
+			<select class="custom-select mb-2 mr-sm-2" id="sl_country" name="country">
+				<option value="">All Countries</option>
+				<?php foreach($countries as $item){ if ($item->id == $filter_url["country"]) $s = "selected"; else $s = "";  ?>
+				<option value="<?= $item->id ?>" <?= $s ?>><?= $item->country ?></option>
+				<?php } ?>
+			</select>
+			<label class="sr-only" for="sl_type">Type</label>
+			<select class="custom-select mb-2 mr-sm-2" id="sl_type" name="type">
+				<option value="">All Types</option>
+				<?php foreach($types as $item){ if ($item->id == $filter_url["type"]) $s = "selected"; else $s = ""; ?>
+				<option value="<?= $item->id ?>" <?= $s ?>><?= $item->type ?></option>
+				<?php } ?>
+			</select>
+			<label class="sr-only" for="inp_keyword">Keyword</label>
+			<input type="text" class="form-control mb-2 mr-sm-2" id="inp_keyword" name="keyword" placeholder="Search Keyword" value="<?= $filter_url["keyword"] ?>">
+			<button type="submit" class="btn btn-primary mb-2">Submit</button>
+		</form>
+	</div>
+</div>
+<div class="row">
 	<div class="col">
 		<div class="table-responsive-sm">
 			<table class="table">
@@ -28,7 +50,7 @@
 				<tbody>
 					<?php foreach($buyers as $i => $item){ ?>
 					<tr>
-						<th scope="row"><?= ($page-1)*50 + 1 + $i ?></th>
+						<th scope="row"><?= number_format(($page-1)*25 + 1 + $i) ?></th>
 						<td><?= $countries_arr[$item->country_id] ?></td>
 						<td><?= $item->company ?></td>
 						<td><?= $types_arr[$item->type_id] ?></td>
@@ -46,8 +68,11 @@
 			</table>
 		</div>
 		<div class="btn-group" role="group" aria-label="paging">
-			<?php foreach($pages as $p){ ?>
-			<a href="<?= base_url() ?>buyer/list?page=<?= $p[0] ?>" class="btn btn-secondary"><?= $p[1] ?></a>
+			<?php foreach($pages as $p){
+			$filter_url["page"] = $p[0]; ?>
+			<a href="<?= base_url() ?>buyer/list?<?= http_build_query($filter_url) ?>" class="btn btn-<?= $p[2] ?>">
+				<?= $p[1] ?>
+			</a>
 			<?php } ?>
 		</div>
 	</div>

@@ -18,17 +18,14 @@ class General_model extends CI_Model{
 		}else return array();
 	}
 	
-    function filter($tablename, $filter, $order_by = "", $order = "", $limit = "", $offset = ""){
-		if ($filter) $this->db->where($filter);
-		if ($order_by) $this->db->order_by($order_by, $order);
-		$query = $this->db->get($tablename, $limit, $offset);
-		$result = $query->result();
-		return $result;
-	}
-	
-	function filter_adv($tablename, $filter, $filter_in = null, $order_by = "", $order = "", $limit = "", $offset = ""){
-		if ($filter) $this->db->where($filter);
-		if ($filter_in) foreach($filter_in as $f) $this->db->where_in($f["field"], $f["values"]);
+	function filter($tablename, $where, $like = null, $filter_in = null, $order_by = "", $order = "", $limit = "", $offset = ""){
+		if ($where){ $this->db->group_start(); $this->db->where($where); $this->db->group_end(); }
+		if ($like){ $this->db->group_start(); $this->db->or_like($like); $this->db->group_end(); }
+		if ($filter_in){
+			$this->db->group_start();
+			foreach($filter_in as $f) $this->db->where_in($f["field"], $f["values"]);
+			$this->db->group_end();
+		}
 		if ($order_by) $this->db->order_by($order_by, $order);
 		$query = $this->db->get($tablename, $limit, $offset);
 		$result = $query->result();
@@ -75,8 +72,9 @@ class General_model extends CI_Model{
 		return $result;
 	}
 	
-	function counter($tablename, $filter, $group_by = null){
-		if ($filter) $this->db->where($filter);
+	function counter($tablename, $where = null, $like = null, $group_by = null){
+		if ($where) $this->db->where($where);
+		if ($like) $this->db->where($like);
 		if ($group_by) $this->db->group_by($group_by);
 		$query = $this->db->get($tablename);
 		return $query->num_rows();

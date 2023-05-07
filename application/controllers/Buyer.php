@@ -18,7 +18,24 @@ class Buyer extends CI_Controller {
 	
 	public function list(){
 		$page = $this->input->get("page"); if (!$page) $page = 1;
-		$filter = [];
+		$filter_url = [
+			"page" => $page,
+			"country" => $this->input->get("country"),
+			"type" => $this->input->get("type"),
+			"keyword" => $this->input->get("keyword")
+		];
+		
+		$f_where = $f_like = [];
+		if ($filter_url["country"]) $f_where["country_id"] = $filter_url["country"];
+		if ($filter_url["type"]) $f_where["type_id"] = $filter_url["type"];
+		if ($filter_url["keyword"]){
+			$f_like["company"] = $filter_url["keyword"];
+			$f_like["web"] = $filter_url["keyword"];
+			$f_like["tel"] = $filter_url["keyword"];
+			$f_like["fax"] = $filter_url["keyword"];
+			$f_like["main_email"] = $filter_url["keyword"];
+			$f_like["address"] = $filter_url["keyword"];
+		}
 		
 		$countries_arr = [];
 		$countries = $this->gm->all("country", "country", "asc");
@@ -29,11 +46,14 @@ class Buyer extends CI_Controller {
 		foreach($types as $item) $types_arr[$item->id] = $item->type;
 		
 		$view = [
+			"filter_url" => $filter_url,
 			"page" => $page,
-			"pages" => $this->my_func->set_page($page, $this->gm->counter("company", $filter)),
+			"pages" => $this->my_func->set_page($page, $this->gm->counter("company", $f_where, $f_like)),
+			"countries" => $countries,
 			"countries_arr" => $countries_arr,
+			"types" => $types,
 			"types_arr" => $types_arr,
-			"buyers" => $this->gm->filter("company", $filter, "registed_at", "desc", $page*50, ($page-1)*50),
+			"buyers" => $this->gm->filter("company", $f_where, $f_like, null, "registed_at", "desc", 25, ($page-1)*25),
 			"main" => "buyer/list",
 			"init" => $this->js_init
 		];
@@ -78,7 +98,7 @@ class Buyer extends CI_Controller {
 		
 		$data = [
 			"position_arr" => $position_arr,
-			"people" => $this->gm->filter("person", ["company_id" => $id],"name", "asc"),
+			"people" => $this->gm->filter("person", ["company_id" => $id], null, null, "name", "asc"),
 			"buyer" => $this->gm->id("company", $id),
 			"countries" => $this->gm->all("country", "country", "asc"),
 			"types" => $this->gm->all("type", "type", "asc"),
@@ -107,23 +127,21 @@ class Buyer extends CI_Controller {
 		$type = "error";
 		$data = $this->input->post();
 		
-		if ($data["name"]){
-			if (!$this->gm->filter("person", ["name" => $data["name"], "company_id" => $data["company_id"]])){
-				//position work
-				if ($data["position"]){
-					$position = $this->gm->filter("position", ["position" => $data["position"]]);
-					if ($position) $data["position_id"] = $position[0]->id;
-					else $data["position_id"] = $this->gm->insert("position", ["position" => $data["position"]]);	
-				}
-				unset($data["position"]);
-				
-				$data["registed_at"] = date('Y-m-d H:i:s', time());
-				if ($this->gm->insert("person", $data)){
-					$type = "success";
-					$msg = "The person has been registered.";
-				}else $msg = "An error occurred. Try again.";
-			}else $msg = "This person already exists.";
-		}else $msg = "Person's name is required.";
+		if (!$this->gm->filter("person", ["name" => $data["name"], "company_id" => $data["company_id"]])){
+			//position work
+			if ($data["position"]){
+				$position = $this->gm->filter("position", ["position" => $data["position"]]);
+				if ($position) $data["position_id"] = $position[0]->id;
+				else $data["position_id"] = $this->gm->insert("position", ["position" => $data["position"]]);	
+			}
+			unset($data["position"]);
+			
+			$data["registed_at"] = date('Y-m-d H:i:s', time());
+			if ($this->gm->insert("person", $data)){
+				$type = "success";
+				$msg = "The person has been registered.";
+			}else $msg = "An error occurred. Try again.";
+		}else $msg = "This person already exists.";
 		
 		header('Content-Type: application/json');
 		echo json_encode(["type" => $type, "msg" => $msg]);
@@ -143,7 +161,7 @@ class Buyer extends CI_Controller {
 	}
 	
 	public function load_people(){
-		$people = $this->gm->filter("person", $this->input->post(),"name", "asc");
+		$people = $this->gm->filter("person", $this->input->post(), null, null, "name", "asc");
 		foreach($people as $item){
 			if ($item->position_id) $item->position = $this->gm->id("position", $item->position_id)->position;
 			else $item->position = "";

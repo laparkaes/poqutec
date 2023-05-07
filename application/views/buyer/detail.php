@@ -139,11 +139,11 @@
 						<label for="person_email">Email</label>
 						<input type="email" class="form-control" id="person_email" name="email">
 					</div>
+					<div class="pt-3">
+						<button type="submit" class="btn btn-primary">Add</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
 				</form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary" id="btn_person_add">Add</button>
 			</div>
 		</div>
 	</div>
