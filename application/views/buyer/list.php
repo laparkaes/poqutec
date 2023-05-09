@@ -13,14 +13,14 @@
 			<input type="hidden" value="1" name="page">
 			<label class="sr-only" for="sl_country">Country</label>
 			<select class="custom-select mb-2 mr-sm-2" id="sl_country" name="country">
-				<option value="">All Countries</option>
+				<option value="">Country</option>
 				<?php foreach($countries as $item){ if ($item->id == $filter_url["country"]) $s = "selected"; else $s = "";  ?>
 				<option value="<?= $item->id ?>" <?= $s ?>><?= $item->country ?></option>
 				<?php } ?>
 			</select>
 			<label class="sr-only" for="sl_type">Type</label>
 			<select class="custom-select mb-2 mr-sm-2" id="sl_type" name="type">
-				<option value="">All Types</option>
+				<option value="">Type</option>
 				<?php foreach($types as $item){ if ($item->id == $filter_url["type"]) $s = "selected"; else $s = ""; ?>
 				<option value="<?= $item->id ?>" <?= $s ?>><?= $item->type ?></option>
 				<?php } ?>
@@ -44,6 +44,7 @@
 						<th scope="col">Email</th>
 						<th scope="col">Web</th>
 						<th scope="col">Tel</th>
+						<th scope="col">Updated</th>
 						<th scope="col"></th>
 					</tr>
 				</thead>
@@ -57,6 +58,7 @@
 						<td><?= $item->main_email ?></td>
 						<td><?= $item->web ?></td>
 						<td><?= $item->tel ?></td>
+						<td><?= $item->updated_at ?></td>
 						<td>
 							<a href="<?= base_url() ?>buyer/detail/<?= $item->id ?>">
 								>>

@@ -12,9 +12,7 @@ class Buyer extends CI_Controller {
 		$this->js_init = "buyer.js";
 	}
 	
-	public function index(){
-		
-	}
+	public function index(){}
 	
 	public function list(){
 		$page = $this->input->get("page"); if (!$page) $page = 1;
@@ -53,7 +51,7 @@ class Buyer extends CI_Controller {
 			"countries_arr" => $countries_arr,
 			"types" => $types,
 			"types_arr" => $types_arr,
-			"buyers" => $this->gm->filter("company", $f_where, $f_like, null, "registed_at", "desc", 25, ($page-1)*25),
+			"buyers" => $this->gm->filter("company", $f_where, $f_like, null, "updated_at", "desc", 25, ($page-1)*25),
 			"main" => "buyer/list",
 			"init" => $this->js_init
 		];
@@ -74,7 +72,7 @@ class Buyer extends CI_Controller {
 	
 	public function register(){
 		$data = $this->input->post();
-		$data["registed_at"] = date('Y-m-d H:i:s', time());
+		$data["registed_at"] = $data["updated_at"] = date('Y-m-d H:i:s', time());
 		
 		$buyer_id = $this->gm->insert("company", $data);
 		if ($buyer_id){
@@ -96,10 +94,15 @@ class Buyer extends CI_Controller {
 		$position_rec = $this->gm->all("position");
 		foreach($position_rec as $item) $position_arr[$item->id] = $item->position;
 		
+		$inquiries = $this->gm->filter("inquiry", ["company_id" => $id], null, null, "registed_at", "desc", 10, 0);
+		foreach($inquiries as $item) 
+			$item->item_qty = $this->gm->counter("inquiry_product", ["company_id" => $id, "inquiry_id" => $item->id]);
+		
 		$data = [
 			"position_arr" => $position_arr,
 			"people" => $this->gm->filter("person", ["company_id" => $id], null, null, "name", "asc"),
 			"buyer" => $this->gm->id("company", $id),
+			"inquiries" => $inquiries,
 			"countries" => $this->gm->all("country", "country", "asc"),
 			"types" => $this->gm->all("type", "type", "asc"),
 			"main" => "buyer/detail",
@@ -111,6 +114,7 @@ class Buyer extends CI_Controller {
 	
 	public function update(){
 		$data = $this->input->post();
+		$data["updated_at"] = date('Y-m-d H:i:s', time());
 		if ($this->gm->update("company", $data["id"], $data)){
 			$type = "success";
 			$msg = "The buyer has been updated.";
