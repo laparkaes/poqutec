@@ -152,6 +152,10 @@ class General_model extends CI_Model{
 		return $this->db->update($tablename, $data);
 	}
 	
+	function update_multi($tablename, $data, $field){ 
+		return $this->db->update_batch($tablename, $data, $field);
+	}
+	
 	function update_f($tablename, $filter, $data){ 
 		$this->db->where($filter);
 		return $this->db->update($tablename, $data);

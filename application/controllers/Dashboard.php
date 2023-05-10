@@ -8,11 +8,13 @@ class Dashboard extends CI_Controller {
 		date_default_timezone_set('Asia/Seoul');
 		//$this->load->model('general_model','general');
 		$this->nav_active = "dashboard";
+		$this->js_init = "dashboard.js";
 	}
 	
 	public function index(){
 		$view = [
-			"main" => "dashboard/index"
+			"main" => "dashboard/index",
+			"init" => $this->js_init,
 		];
 		
 		$this->load->view('layout', $view);

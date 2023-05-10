@@ -39,15 +39,53 @@
 			</div>
 			<div class="card-body">
 				<form id="form_add_inquiry">
+					<input type="hidden" name="company_id" value="<?= $company->id ?>">
 					<div class="form-row">
 						<div class="form-group col-md-6">
 							<label class="mr-5">Incoterm</label>
-							<?php foreach($incoterms as $item){ ?>
-							<div class="custom-control custom-checkbox custom-control-inline">
-								<input type="checkbox" id="rd_incoterm<?= $item->id ?>" name="incoterm[]" class="custom-control-input" value="<?= $item->id ?>">
-								<label class="custom-control-label" for="rd_incoterm<?= $item->id ?>"><?= $item->incoterm_short ?></label>
+							<div class="form-control">
+								<?php foreach($incoterms as $item){ ?>
+								<div class="custom-control custom-checkbox custom-control-inline">
+									<input type="checkbox" id="rd_incoterm<?= $item->id ?>" name="incoterm[]" class="custom-control-input" value="<?= $item->id ?>">
+									<label class="custom-control-label" for="rd_incoterm<?= $item->id ?>"><?= $item->incoterm_short ?></label>
+								</div>
+								<?php } ?>
 							</div>
-							<?php } ?>
+						</div>
+						<div class="form-group col-md-6">
+							<label class="mr-5">Arrival Port</label>
+							<input type="text" class="form-control" name="port">
+						</div>
+						<div class="form-group col-md-12">
+							<label>Person in Charge</label>
+							<table class="table table-sm">
+								<thead>
+									<tr>
+										<th scope="col"></th>
+										<th scope="col">Name</th>
+										<th scope="col">Position</th>
+										<th scope="col">Mobile</th>
+										<th scope="col">Email</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach($people as $item){ ?>
+									<tr>
+										<td>
+											<div class="custom-control custom-checkbox">
+												<input type="checkbox" class="custom-control-input" name="people[]" 
+													id="customCheck<?= $item->id ?>" value="<?= $item->id ?>">
+												<label class="custom-control-label" for="customCheck<?= $item->id ?>"></label>
+											</div>
+										</td>
+										<td><?= $item->name ?></td>
+										<td><?= $item->position ?></td>
+										<td><?= $item->mobile ?></td>
+										<td><?= $item->email ?></td>
+									</tr>
+									<?php } ?>
+								</tbody>
+							</table>
 						</div>
 						<div class="form-group col-md-12">
 							<label>Products</label>
@@ -110,7 +148,7 @@
 						<input type="number" class="form-control" id="inp_add_inq_product_qty" value="1">
 					</div>
 					<div class="form-group col-md-12">
-						<label for="inp_add_inq_product_remark">Remark</label>
+						<label for="inp_add_inq_product_remark">Remark (Applicable machine, etc...)</label>
 						<input type="text" class="form-control" id="inp_add_inq_product_remark">
 					</div>
 				</div>

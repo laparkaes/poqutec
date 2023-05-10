@@ -7,7 +7,7 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-md-8 col-sm-12">
+	<div class="col-md-12">
 		<div class="card mb-3">
 			<div class="card-header d-flex justify-content-between align-items-center">
 				<h5 class="mb-0">Company Information</h5>
@@ -68,33 +68,43 @@
 			</div>
 		</div>
 	</div>
-	<div class="col-md-4 col-sm-12">
+	<div class="col-md-12">
 		<div class="card mb-3">
 			<div class="card-header d-flex justify-content-between align-items-center">
 				<h5 class="mb-0">People</h5>
 				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#md_person_add">Add</button>
 			</div>
 			<div class="card-body">
-				<ul class="list-group" id="ul_people_list">
-					<?php foreach($people as $item){ ?>
-					<li class="list-group-item">
-						<div class="d-flex justify-content-between align-items-start">
-							<h5 class="mb-0"><?= $item->name ?></h5>
-							<button type="button" class="btn btn-danger btn-sm btn_person_delete" value="<?= $item->id ?>">
-								<i class="fas fa-trash-alt"></i>
-							</button>
-						</div>
-						<?php if ($item->position_id){ ?>
-						<p class="mb-1"><?= $position_arr[$item->position_id] ?></p>
-						<?php } if ($item->mobile){ ?>
-						<p class="mb-1"><i class="fas fa-phone fa-fw"></i> <?= $item->mobile ?></p>
-						<?php } if ($item->email){ ?>
-						<p class="mb-1"><i class="fas fa-envelope fa-fw"></i> <?= $item->email ?></p>
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Name</th>
+							<th scope="col">Position</th>
+							<th scope="col">Mobile</th>
+							<th scope="col">Email</th>
+							<th scope="col">Registered</th>
+							<th scope="col"></th>
+						</tr>
+					</thead>
+					<tbody id="tb_people">
+						<?php foreach($people as $i => $item){ ?>
+						<tr>
+							<th scope="row"><?= $i + 1 ?></th>
+							<td><?= $item->name ?></td>
+							<td><?= $item->position ?></td>
+							<td><?= $item->mobile ?></td>
+							<td><?= $item->email ?></td>
+							<td><?= $item->registed_at ?></td>
+							<td class="text-right">
+								<button type="button" class="btn btn-danger btn-sm btn_person_delete" value="<?= $item->id ?>">
+									<i class="fas fa-trash-alt"></i>
+								</button>
+							</td>
+						</tr>
 						<?php } ?>
-						<small class="text-muted"><?= $item->registed_at ?></small>
-					</li>
-					<?php } ?>
-				</ul>
+					</tbody>
+				</table>
 			</div>
 		</div>	
 	</div>
@@ -103,11 +113,34 @@
 	<div class="col-md-6 col-sm-12">
 		<div class="card">
 			<div class="card-header d-flex justify-content-between align-items-center">
-				<h5 class="mb-0">Inquieries</h5>
+				<h5 class="mb-0">Recent Inquieries</h5>
 				<a href="<?= base_url() ?>inquiry/new?buyer_id=<?= $buyer->id ?>" class="btn btn-primary">New</a>
 			</div>
 			<div class="card-body">
-				<?php print_r($inquiries); ?>
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Date</th>
+							<th scope="col">Item Qty</th>
+							<th scope="col"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach($inquiries as $i => $item){ ?>
+						<tr>
+							<th scope="row"><?= $i + 1 ?></th>
+							<td><?= $item->registed_at ?></td>
+							<td><?= $item->item_qty ?></td>
+							<td class="text-right">
+								<a type="button" class="btn btn-info btn-sm" href="<?= base_url() ?>inquiry/detail/<?= $item->id ?>">
+									<i class="fas fa-search"></i>
+								</a>
+							</td>
+						</tr>
+						<?php } ?>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>

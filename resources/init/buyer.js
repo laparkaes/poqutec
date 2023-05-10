@@ -17,14 +17,9 @@ function set_buyer_update_form(is_edit){
 function person_reload(company_id){
 	ajax_simple({company_id:company_id}, "buyer/load_people").done(function(res) {
 		var dom_set;
-		$("#ul_people_list").html("");
+		$("#tb_people").html("");
 		$.each(res, function(index, item) {
-			dom_set = '<li class="list-group-item"><div class="d-flex justify-content-between align-items-start"><h5 class="mb-0">' + item.name + '</h5><button type="button" class="btn btn-danger btn-sm btn_person_delete" value="' + item.id + '"><i class="fas fa-trash-alt"></i></button></div>';
-			if (item.position != "") dom_set += '<p class="mb-1">' + item.position + '</p>';
-			if (item.mobile != "") dom_set += '<p class="mb-1"><i class="fas fa-phone fa-fw"></i> ' + item.mobile + '</p>';
-			if (item.email != "") dom_set += '<p class="mb-1"><i class="fas fa-envelope fa-fw"></i> ' + item.email + '</p>';
-			dom_set += '<small class="text-muted">' + item.registed_at + '</small></li>';
-			$("#ul_people_list").append(dom_set);
+			$("#tb_people").append('<tr><th scope="row">' + (index + 1) + '</th><td>' + item.name + '</td><td>' + item.position + '</td><td>' + item.mobile + '</td><td>' + item.email + '</td><td>' + item.registed_at + '</td><td class="text-right"><button type="button" class="btn btn-danger btn-sm btn_person_delete" value="' + item.id + '"><i class="fas fa-trash-alt"></i></button></td></tr>');
 		});
 		$(".btn_person_delete").on('click',(function(e) {person_delete($(this).val());}));
 	});

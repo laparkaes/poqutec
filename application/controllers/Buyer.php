@@ -90,17 +90,15 @@ class Buyer extends CI_Controller {
 	}
 	
 	public function detail($id){
-		$position_arr = [];
-		$position_rec = $this->gm->all("position");
-		foreach($position_rec as $item) $position_arr[$item->id] = $item->position;
+		$people = $this->gm->filter("person", ["company_id" => $id], null, null, "name", "asc");
+		foreach($people as $item) $item->position = $this->gm->id("position", $item->position_id)->position;
 		
 		$inquiries = $this->gm->filter("inquiry", ["company_id" => $id], null, null, "registed_at", "desc", 10, 0);
 		foreach($inquiries as $item) 
-			$item->item_qty = $this->gm->counter("inquiry_product", ["company_id" => $id, "inquiry_id" => $item->id]);
+			$item->item_qty = number_format($this->gm->counter("inquiry_product", ["inquiry_id" => $item->id]));
 		
 		$data = [
-			"position_arr" => $position_arr,
-			"people" => $this->gm->filter("person", ["company_id" => $id], null, null, "name", "asc"),
+			"people" => $people,
 			"buyer" => $this->gm->id("company", $id),
 			"inquiries" => $inquiries,
 			"countries" => $this->gm->all("country", "country", "asc"),
