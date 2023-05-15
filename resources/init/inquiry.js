@@ -124,7 +124,7 @@ function payment_term_save(){
 
 function freight_insurance_save(){
 	var freight_insurance = $("#inp_freight_insurance").val();
-	if (freight_insurance == "") swal("error", "Enter freight & insurance cost.");
+	if (freight_insurance == "0") swal("error", "Enter freight & insurance cost.");
 	else{
 		var data = {id: $("#inquiry_id").val(), freight_insurance_cost: freight_insurance};
 		ajax_simple(data, "inquiry/freight_insurance_save").done(function(res) {
@@ -133,15 +133,32 @@ function freight_insurance_save(){
 	}
 }
 
+function handling_save(){
+	var handling = $("#handling").val();
+	if (handling == "0") swal("error", "Enter handling cost.");
+	else{
+		var data = {id: $("#inquiry_id").val(), handling_cost: handling};
+		ajax_simple(data, "inquiry/handling_save").done(function(res) {
+			 swal(res.type, res.msg);
+		});
+	}
+}
+
 function load_price_history(dom){
 	var data = {inq_prod_id: $(dom).parent().find(".inq_prod_id").val()};
 	ajax_simple(data, "inquiry/load_price_history").done(function(res) {
-		$("#his_tbody").html("");
-		$("#his_tbody").append('<tr class="bg-dark text-light"><td class="align-middle">Normal Price</td><td class="align-middle">-</td><td class="align-middle">' + res.product.price + '</td></tr>');
-		$.each(res.products, function(index, item) {
-			$("#his_tbody").append('<tr><td class="align-middle">' + item.registed_at + '</td><td class="align-middle">' + item.qty + '</td><td class="align-middle">' + item.unit_price + '</td></tr>');
-		});
-		$("#his_prod_name").html(res.product.product);
+		$("#price_history_model").html(res.product.product);
+		$("#price_history_list").html("");
+		
+		$("#price_history_list").append('<li class="list-group-item d-flex justify-content-between list-group-item-primary"><span>Formal Price</span><span>USD ' + res.product.price + '</span></li>');
+		
+		if (res.products.length > 0){
+			$.each(res.products, function(index, item) {
+				$("#price_history_list").append('<li class="list-group-item d-flex justify-content-between"><div>' + item.registed_at + '</div><div class="text-right"><span>USD ' + item.unit_price + '</span><br/><small>' + item.qty + ' Units<small></div></li>');
+			});
+		}else{
+			$("#price_history_list").append('<li class="list-group-item text-danger">No price history.</li>');
+		}
 	});
 }
 
@@ -163,6 +180,17 @@ function update_price(dom){
 	});
 }
 
+function make_proforma(){
+	swal("warning", "To be developed.<br/>This will make a PDF Proforma to be downloaded.");
+}
+
+function confirm_sale(inquiry_id){
+	var msg = "Are you sure you want to create a sales record based on this inquiry?";
+	ajax_simple_warning({id: inquiry_id}, "inquiry/confirm_sale", msg).done(function(res) {
+		swal_redirection(res.type, res.msg, res.move_to);
+	});
+}
+
 $(document).ready(function() {
 	//new
 	$("#form_add_inquiry").submit(function(e) {e.preventDefault(); add_inquiry(this);});
@@ -173,11 +201,13 @@ $(document).ready(function() {
 	$("#form_update_price").submit(function(e) {e.preventDefault(); update_price(this);});
 	$("#btn_payment_term_save").on('click',(function(e) {payment_term_save();}));
 	$("#btn_freight_insurance_save").on('click',(function(e) {freight_insurance_save();}));
+	$("#btn_handling_save").on('click',(function(e) {handling_save();}));
 	$(".prod_uprice").on("focus", function() {load_price_history(this);});
 	$(".prod_uprice").on("keyup", function() {set_subtotal(this);});
 	$(".prod_uprice").change(function() {set_subtotal(this);});
 	
-	
+	$("#btn_make_proforma").on('click',(function(e) {make_proforma($(this).val());}));
+	$("#btn_confirm_sale").on('click',(function(e) {confirm_sale($(this).val());}));
 	
 	
 	

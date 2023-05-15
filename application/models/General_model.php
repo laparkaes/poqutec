@@ -72,9 +72,14 @@ class General_model extends CI_Model{
 		return $result;
 	}
 	
-	function counter($tablename, $where = null, $like = null, $group_by = null){
-		if ($where) $this->db->where($where);
-		if ($like) $this->db->where($like);
+	function counter($tablename, $where = null, $like = null, $where_in = null, $group_by = null){
+		if ($where){ $this->db->group_start(); $this->db->where($where); $this->db->group_end(); }
+		if ($like){ $this->db->group_start(); $this->db->or_like($like); $this->db->group_end(); }
+		if ($where_in){
+			$this->db->group_start();
+			foreach($where_in as $f) $this->db->where_in($f["field"], $f["values"]);
+			$this->db->group_end();
+		}
 		if ($group_by) $this->db->group_by($group_by);
 		$query = $this->db->get($tablename);
 		return $query->num_rows();

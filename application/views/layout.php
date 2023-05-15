@@ -34,17 +34,17 @@
 			<li class="nav-item <?= $a ?>">
 				<a class="nav-link" href="<?= base_url() ?>dashboard">Home</a>
 			</li>
-			<?php if (!strcmp($this->nav_active, "buyer")) $a = "active"; else $a = ""; ?>
-			<li class="nav-item <?= $a ?>">
-				<a class="nav-link" href="<?= base_url() ?>buyer/list">Buyer</a>
-			</li>
 			<?php if (!strcmp($this->nav_active, "product")) $a = "active"; else $a = ""; ?>
 			<li class="nav-item <?= $a ?>">
 				<a class="nav-link" href="<?= base_url() ?>product/list">Product</a>
 			</li>
+			<?php if (!strcmp($this->nav_active, "buyer")) $a = "active"; else $a = ""; ?>
+			<li class="nav-item <?= $a ?>">
+				<a class="nav-link" href="<?= base_url() ?>buyer/list">Buyer</a>
+			</li>
 			<?php if (!strcmp($this->nav_active, "inquiry")) $a = "active"; else $a = ""; ?>
 			<li class="nav-item <?= $a ?>">
-				<a class="nav-link" href="#">Inquiry</a>
+				<a class="nav-link" href="<?= base_url() ?>inquiry/list">Inquiry</a>
 			</li>
 			<?php if (!strcmp($this->nav_active, "sale")) $a = "active"; else $a = ""; ?>
 			<li class="nav-item <?= $a ?>">

@@ -25,26 +25,35 @@ class Inquiry extends CI_Controller {
 		$page = $this->input->get("page"); if (!$page) $page = 1;
 		$filter_url = [
 			"page" => $page,
-			"category" => $this->input->get("category"),
-			"keyword" => $this->input->get("keyword")
+			"buyer" => $this->input->get("buyer")
 		];
 		
-		$f_where = $f_like = [];
-		if ($filter_url["category"]) $f_where["category_id"] = $filter_url["category"];
-		if ($filter_url["keyword"]) $f_like["product"] = $filter_url["keyword"];
+		$f_w = $f_l = $f_w_in = [];
+		if ($filter_url["buyer"]){
+			$buyer_ids = [];
+			$buyers = $this->gm->filter("company", null, ["company" => $filter_url["buyer"]]);
+			foreach($buyers as $item) $buyer_ids[] = $item->id;
+			$f_w_in[] = ["field" => "company_id", "values" => $buyer_ids];
+		}
 		
-		$categories_arr = [];
-		$categories = $this->gm->all("category", "category", "asc");
-		foreach($categories as $item) $categories_arr[$item->id] = $item->category;
+		$inquiries = $this->gm->filter("inquiry", $f_w, $f_l, $f_w_in, "updated_at", "desc", 25, ($page-1)*25);
+		foreach($inquiries as $item){
+			$buyer = $this->gm->id("company", $item->company_id);
+			$country = $this->gm->id("country", $buyer->country_id);
+			$sale = $this->gm->filter("sale", ["inquiry_id" => $item->id]);
+		
+			$item->buyer = $buyer->company;
+			$item->country = $country->country;
+			$item->item_qty = $this->gm->counter("inquiry_product", ["inquiry_id" => $item->id]);
+			if ($sale) $item->sale = "success"; else $item->sale = "warning";
+		}
 		
 		$view = [
 			"filter_url" => $filter_url,
 			"page" => $page,
-			"pages" => $this->my_func->set_page($page, $this->gm->counter("product", $f_where, $f_like)),
-			"categories" => $categories,
-			"categories_arr" => $categories_arr,
-			"products" => $this->gm->filter("product", $f_where, $f_like, null, "updated_at", "desc", 25, ($page-1)*25),
-			"main" => "product/list",
+			"pages" => $this->my_func->set_page($page, $this->gm->counter("inquiry", $f_w, $f_l, $f_w_in)),
+			"inquiries" => $inquiries,
+			"main" => "inquiry/list",
 			"init" => $this->js_init
 		];
 		
@@ -137,6 +146,7 @@ class Inquiry extends CI_Controller {
 		foreach($products as $item){
 			$product = $this->gm->id("product", $item->product_id);
 			$product->category = $this->gm->id("category", $product->category_id);
+			if (!$item->unit_price) $item->unit_price = $product->price;
 			$item->product = $product;
 		}
 		
@@ -189,16 +199,31 @@ class Inquiry extends CI_Controller {
 		echo json_encode(["type" => $type, "msg" => $msg]);
 	}
 	
+	public function handling_save(){
+		$data = $this->input->post();
+		$data["updated_at"] = date('Y-m-d H:i:s', time());
+		if ($this->gm->update("inquiry", $data["id"], $data)){
+			$type = "success";
+			$msg = "Handling cost has been saved.";
+		}else{
+			$type = "error";
+			$msg = "An error occurred. Try again.";
+		}
+			
+		header('Content-Type: application/json');
+		echo json_encode(["type" => $type, "msg" => $msg]);
+	}
+	
 	public function load_price_history(){
 		$inq_prod = $this->gm->id("inquiry_product", $this->input->post("inq_prod_id"));
 		$inquiry = $this->gm->id("inquiry", $inq_prod->inquiry_id);
-		$inquiries = $this->gm->filter("inquiry", ["company_id" => $inquiry->company_id], null, null, "registed_at", "desc", 0, 10);
+		$inquiries = $this->gm->filter("inquiry", ["company_id" => $inquiry->company_id], null, null, "registed_at", "desc");
 		
 		$products = [];
 		$f_w = ["product_id" => $inq_prod->product_id];
 		foreach($inquiries as $item){
 			$f_w["inquiry_id"] = $item->id;
-			$inq_product = $this->gm->filter("inquiry_product", $f_w, null, null);
+			$inq_product = $this->gm->filter("inquiry_product", $f_w, null, null, null, null, 0, 10);
 			foreach($inq_product as $p){
 				if ($inquiry->id != $p->inquiry_id){
 					$p->unit_price = number_format($p->unit_price, 2);
@@ -206,6 +231,7 @@ class Inquiry extends CI_Controller {
 					$products[] = $p;	
 				}
 			}
+			usort($inq_product, function($a, $b) { return (strtotime($a->registed_at) - strtotime($b->registed_at));});
 		}
 		
 		$product = $this->gm->id("product", $inq_prod->product_id);
@@ -217,16 +243,57 @@ class Inquiry extends CI_Controller {
 	}
 	
 	public function update_price(){
-		if ($this->gm->update_multi("inquiry_product", $this->input->post("prod"), "id")){
-			$type = "success";
-			$msg = "Price has been updated.";
-		}else{
-			$type = "error";
-			$msg = "You must enter a different price to save.";
-		}
+		$type = "success";
+		$msg = "Price has been updated.";
+		$this->gm->update_multi("inquiry_product", $this->input->post("prod"), "id");
 		
 		header('Content-Type: application/json');
 		echo json_encode(["type" => $type, "msg" => $msg]);
+	}
+	
+	public function confirm_sale(){
+		$type = "error"; $msg = ""; $move_to = null;
+		
+		$inquiry = $this->gm->id("inquiry", $this->input->post("id"));
+		$products = $this->gm->filter("inquiry_product", ["inquiry_id" => $inquiry->id], null, null, "unit_price", "desc");
+		
+		$msg = "";
+		if (!$inquiry->payment_term_id) $msg = $msg."<br/>- Select a payment term.";
+		foreach($products as $item){
+			if (!$item->unit_price) $msg = $msg."<br/>- Save product price.";
+			break;
+		}
+		
+		if (!$msg){
+			//create sale record
+			$amount = 0;
+			foreach($products as $item) $amount += $item->unit_price * $item->qty;
+			
+			$sale_data = [
+				"amount" => $amount,
+				"inquiry_id" => $inquiry->id,
+				"updated_at" => date('Y-m-d H:i:s', time()),
+			];
+			
+			$sale = $this->gm->filter("sale", ["inquiry_id" => $inquiry->id]);
+			if ($sale){
+				$sale = $sale[0];
+				$this->gm->update("sale", $sale->id, $sale_data);
+				$sale_id = $sale->id;
+			}else{
+				$sale_data["registed_at"] = date('Y-m-d H:i:s', time());
+				$sale_id = $this->gm->insert("sale", $sale_data);
+			}
+			
+			if ($sale_id){
+				$type = "success";
+				$msg = "New sale has been registered";
+				$move_to = base_url()."sale/detail/".$sale_id;
+			}else $msg = "Internal error. Please try again.";
+		}else $msg = "An error occurred.".$msg;
+		
+		header('Content-Type: application/json');
+		echo json_encode(["type" => $type, "msg" => $msg, "move_to" => $move_to]);
 	}
 	
 	////////////////////////////
