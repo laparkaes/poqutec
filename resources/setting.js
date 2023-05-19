@@ -78,7 +78,19 @@ function ajax_simple_warning(data, url, warning_msg){
 	return deferred.promise();
 }
 
+function datepicker_min(dom_id){
+	$('#' + dom_id).datetimepicker({
+		minDate: moment(),
+		allowInputToggle: true,
+		showClose: true,
+		showClear: true,
+		format: "YYYY-MM-DD",
+	});
+}
 
+function nf(num){//number format
+	return parseFloat(num).toLocaleString('es-US', {maximumFractionDigits: 2, minimumFractionDigits: 2});
+}
 
 $(document).ready(function() {
 	

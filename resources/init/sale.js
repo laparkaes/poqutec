@@ -40,10 +40,37 @@ function add_inquiry(dom){
 	});
 }
 
-function update_inquiry(dom){
-	ajax_form(dom, "inquiry/update_inquiry").done(function(res) {
-		 swal(res.type, res.msg);
-	});
+function payment_term_save(){
+	var payment_term_id = $("#sl_payment_term_id").val();
+	if (payment_term_id == "") swal("error", "Choose a payment term.");
+	else{
+		var data = {id: $("#inquiry_id").val(), payment_term_id: payment_term_id};
+		ajax_simple(data, "inquiry/payment_term_save").done(function(res) {
+			 swal(res.type, res.msg);
+		});
+	}
+}
+
+function freight_insurance_save(){
+	var freight_insurance = $("#inp_freight_insurance").val();
+	if (freight_insurance == "0") swal("error", "Enter freight & insurance cost.");
+	else{
+		var data = {id: $("#inquiry_id").val(), freight_insurance_cost: freight_insurance};
+		ajax_simple(data, "inquiry/freight_insurance_save").done(function(res) {
+			 swal(res.type, res.msg);
+		});
+	}
+}
+
+function handling_save(){
+	var handling = $("#handling").val();
+	if (handling == "0") swal("error", "Enter handling cost.");
+	else{
+		var data = {id: $("#inquiry_id").val(), handling_cost: handling};
+		ajax_simple(data, "inquiry/handling_save").done(function(res) {
+			 swal(res.type, res.msg);
+		});
+	}
 }
 
 function load_price_history(dom){
@@ -89,15 +116,62 @@ function confirm_sale(inquiry_id){
 	});
 }
 
+//////////////////////////////////////////// start from here
+
+function save_sale_data(dom){
+	ajax_form(dom, "sale/save_sale_data").done(function(res) {
+		swal(res.type, res.msg);
+	});
+}
+
+function add_package(dom){
+	ajax_form(dom, "sale/add_package").done(function(res) {
+		swal_redirection(res.type, res.msg, window.location.href);
+	});
+}
+
+function delete_package(pack_id){
+	ajax_simple_warning({id: pack_id}, "sale/delete_package", "Are you sure to delete selected package?").done(function(res) {
+		swal_redirection(res.type, res.msg, window.location.href);
+	});
+}
+
+function calculate_volume(){
+	var l = parseFloat($("#inp_length").val());
+	var w = parseFloat($("#inp_width").val());
+	var h = parseFloat($("#inp_height").val());
+	
+	if (isNaN(l) || isNaN(w) || isNaN(h)) return;
+	else{
+		var vol = (l/1000) * (w/1000) * (h/1000); //MM then calculate CBM
+		$("#inp_volume").val(vol.toFixed(2));
+	}
+	
+}
+
 $(document).ready(function() {
+	//detail
+	datepicker_min("inp_etd");
+	datepicker_min("inp_eta");
+	$("#form_save_sale_data").submit(function(e) {e.preventDefault(); save_sale_data(this);});
+	$("#form_add_package").submit(function(e) {e.preventDefault(); add_package(this);});
+	$(".btn_delete_package").on('click',(function(e) {delete_package($(this).val());}));
+	$(".c_vol").on("keyup", function() {calculate_volume();});
+	
+	
+	
+	////////////////////end here
+	
 	//new
 	$("#form_add_inquiry").submit(function(e) {e.preventDefault(); add_inquiry(this);});
 	$("#sl_add_inq_category").change(function() {load_products($(this).val());});
-	$("#btn_add_product").on('click',(function(e) {add_product_to_list();}));
+	
 	
 	//detail
-	$("#form_update_inquiry").submit(function(e) {e.preventDefault(); update_inquiry(this);});
 	$("#form_update_price").submit(function(e) {e.preventDefault(); update_price(this);});
+	$("#btn_payment_term_save").on('click',(function(e) {payment_term_save();}));
+	$("#btn_freight_insurance_save").on('click',(function(e) {freight_insurance_save();}));
+	$("#btn_handling_save").on('click',(function(e) {handling_save();}));
 	$(".prod_uprice").on("focus", function() {load_price_history(this);});
 	$(".prod_uprice").on("keyup", function() {set_subtotal(this);});
 	$(".prod_uprice").change(function() {set_subtotal(this);});

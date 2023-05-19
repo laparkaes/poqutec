@@ -7,41 +7,61 @@
 	</div>
 </div>
 <div class="row mt-3">
-	<div class="col-md-6">
-		<div class="card">
+	<div class="col-md-12">
+		<div class="card mb-3">
 			<div class="card-header d-flex justify-content-between align-items-center">
 				<h5 class="mb-0">Buyer</h5>
 			</div>
-			<div class="card-body" style="height: 400px; overflow-y: auto;">
+			<div class="card-body">
 				<div class="form-row">
-					<div class="form-group col-md-12">
-						<label for="in_inquiry">Company</label>
-						<input type="text" class="form-control" value="<?= $company->company ?>" readonly>
-					</div>
 					<div class="form-group col-md-6">
-						<label for="in_inquiry">Country</label>
-						<input type="text" class="form-control" value="<?= $company->country ?>" readonly>
+						<label><strong>Company</strong></label>
+						<div><?= $company->company ?></div>
 					</div>
-					<div class="form-group col-md-6">
-						<label for="in_inquiry">Type</label>
-						<input type="text" class="form-control" value="<?= $company->type ?>" readonly>
+					<div class="form-group col-md-3">
+						<label><strong>Country</strong></label>
+						<div><?= $company->country ?></div>
 					</div>
-					<div class="form-group col-md-12">
-						<label for="in_inquiry">Person in Charge</label>
-						<table class="table table-sm mb-0">
+					<div class="form-group col-md-3">
+						<label><strong>Type</strong></label>
+						<div><?= $company->type ?></div>
+					</div>
+					<div class="form-group col-md-3">
+						<label><strong>Tel</strong></label>
+						<div><?= $company->tel ?></div>
+					</div>
+					<div class="form-group col-md-3">
+						<label><strong>Fax</strong></label>
+						<div><?= $company->fax ?></div>
+					</div>
+					<div class="form-group col-md-3">
+						<label><strong>Main Email</strong></label>
+						<div><?= $company->main_email ?></div>
+					</div>
+					<div class="form-group col-md-3">
+						<label><strong>Web</strong></label>
+						<div><?= $company->web ?></div>
+					</div>
+					<div class="form-group col-md-12 mb-0">
+						<label><strong>Person in Charge</strong></label>
+						<table class="table mb-0">
 							<thead>
 								<tr>
+									<th scope="col">#</th>
 									<th scope="col">Name</th>
+									<th scope="col">Position</th>
 									<th scope="col">Mobile</th>
 									<th scope="col">Email</th>
 								</tr>
 							</thead>
 							<tbody>
-								<?php foreach($people as $item){ ?>
+								<?php foreach($people as $i => $item){ ?>
 								<tr>
-									<td class="align-middle"><?= $item->name ?><br/><small><?= $item->position ?></small></td>
-									<td class="align-middle"><?= $item->mobile ?></td>
-									<td class="align-middle"><?= $item->email ?></td>
+									<th scope="row"><?= $i + 1 ?></th>
+									<td><?= $item->name ?></td>
+									<td><?= $item->position ?></td>
+									<td><?= $item->mobile ?></td>
+									<td><?= $item->email ?></td>
 								</tr>
 								<?php } ?>
 							</tbody>
@@ -51,64 +71,65 @@
 			</div>
 		</div>
 	</div>
-	<div class="col-md-6">
-		<div class="card">
+</div>
+<div class="row mt-3">
+	<div class="col-md-12">
+		<div class="card mb-3">
 			<div class="card-header d-flex justify-content-between align-items-center">
 				<h5 class="mb-0">General Information</h5>
 			</div>
-			<div class="card-body" style="height: 400px; overflow-y: auto;">
-				<div class="form-row" id="form_inquiry_update">
+			<div class="card-body">
+				<div class="form-row">
 					<input type="hidden" name="id" value="<?= $inquiry->id ?>">
-					<div class="form-group col-md-6">
-						<label for="inp_date">Date</label>
-						<input type="text" class="form-control" value="<?= $inquiry->registed_at ?>" id="inp_date" readonly>
+					<div class="form-group col-md-3">
+						<label><strong>Issue Date</strong></label>
+						<div><?= date("Y-m-d", strtotime($inquiry->registed_at)) ?></div>
+					</div>
+					<div class="form-group col-md-3">
+						<label><strong>Last Update</strong></label>
+						<div><?= date("Y-m-d", strtotime($inquiry->updated_at)) ?></div>
 					</div>
 					<div class="form-group col-md-6">
-						<label for="inp_updated">Last Update</label>
-						<input type="text" class="form-control" value="<?= $inquiry->updated_at ?>" id="inp_updated" readonly>
+						<label><strong>Destination Port / Airport</strong></label>
+						<div><?= $company->country." - ".$inquiry->port ?></div>
 					</div>
-					<div class="form-group col-md-6 col-sm-12">
-						<label for="inp_incoterms">Incoterms</label>
-						<input type="text" class="form-control" value="<?= $inquiry->incoterms ?>" id="inp_incoterms" readonly>
-					</div>
-					<div class="form-group col-md-6 col-sm-12">
-						<label for="inp_port">Port</label>
-						<input type="text" class="form-control" value="<?= $inquiry->port ?>" id="inp_port" readonly>
-					</div>
-					<div class="form-group col-md-6 col-sm-12">
-						<label for="inp_handling_cost">Handling Cost, USD</label>
-						<div class="input-group">
-							<input type="text" class="form-control" id="inp_handling_cost" value="<?= $inquiry->handling_cost ?>">
-							<div class="input-group-append">
-								<button class="btn btn-primary" id="btn_handling_save" type="button">Save</button>
-							</div>
+				</div>
+				<form id="form_update_inquiry">
+					<input type="hidden" name="id" value="<?= $inquiry->id ?>">
+					<div class="form-row">
+						<div class="form-group col-md-6">
+							<label><strong>Incoterm</strong></label>
+							<select class="custom-select" name="incoterm_id">
+								<option value="">Choose...</option>
+								<?php foreach($inquiry->incoterms as $item){
+								if($item->id == $inquiry->incoterm_id) $s = "selected"; else $s = ""; ?>
+								<option value="<?= $item->id ?>" <?= $s ?>><?= $item->incoterm_short." - ".$item->incoterm ?></option>
+								<?php } ?>
+							</select>
 						</div>
-					</div>
-					<div class="form-group col-md-6 col-sm-12">
-						<label for="inp_freight_insurance">Freight & Insurance Cost, USD</label>
-						<div class="input-group">
-							<input type="text" class="form-control" id="inp_freight_insurance" value="<?= $inquiry->freight_insurance_cost ?>">
-							<div class="input-group-append">
-								<button class="btn btn-primary" id="btn_freight_insurance_save" type="button">Save</button>
-							</div>
-						</div>
-					</div>
-					<div class="form-group col-md-12 col-sm-12">
-						<label for="sl_payment_term_id">Payment Term</label>
-						<div class="input-group">
-							<select class="custom-select" id="sl_payment_term_id">
+						<div class="form-group col-md-6">
+							<label><strong>Payment Term</strong></label>
+							<select class="custom-select" name="payment_term_id">
 								<option value="">Choose...</option>
 								<?php foreach($payment_terms as $item){
 									if($item->id == $inquiry->payment_term_id) $s = "selected"; else $s = ""; ?>
 								<option value="<?= $item->id ?>" <?= $s ?>><?= $item->payment_term ?></option>
 								<?php } ?>
 							</select>
-							<div class="input-group-append">
-								<button class="btn btn-primary" id="btn_payment_term_save" type="button">Save</button>
-							</div>
+						</div>
+						<div class="form-group col-md-6">
+							<label><strong>Handling Cost, USD</strong></label>
+							<input type="text" class="form-control" name="handling_cost" value="<?= $inquiry->handling_cost ?>">
+						</div>
+						<div class="form-group col-md-6">
+							<label><strong>Insurance & Freight Cost, USD</strong></label>
+							<input type="text" class="form-control" name="freight_insurance_cost" value="<?= $inquiry->freight_insurance_cost ?>">
+						</div>
+						<div class="form-group col-md-12 pt-3">
+							<button class="btn btn-primary" type="submit">Save Inquiry Data</button>
 						</div>
 					</div>
-				</div>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -123,6 +144,7 @@
 				<div class="row">
 					<div class="col-md-8 col-sm-12">
 						<form id="form_update_price">
+							<input type="hidden" name="inquiry_id" value="<?= $inquiry->id ?>">
 							<table class="table mb-0">
 								<thead>
 									<tr>
@@ -158,9 +180,7 @@
 						</form>
 					</div>
 					<div class="col-md-4 col-sm-12">
-						<h5 class="d-flex justify-content-between">
-							<span>Price History</span><span id="price_history_model"></span>
-						</h5>
+						<h5 id="price_history_model">Price History</h5>
 						<ul class="list-group" id="price_history_list">
 							<li class="list-group-item text-info">Select price textbox to see price history.</li>
 						</ul>

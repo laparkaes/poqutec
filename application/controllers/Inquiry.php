@@ -11,13 +11,6 @@ class Inquiry extends CI_Controller {
 		$this->nav_active = "inquiry";
 		$this->js_init = "inquiry.js";
 	}
-	/*
-		$inquiries = $this->gm->filter("inquiry", ["company_id" => $company->id], null, null, "registed_at", "desc");
-		foreach($inquiries as $item){
-			//do something later
-		}
-		*/
-		
 	
 	public function index(){}
 	
@@ -129,14 +122,10 @@ class Inquiry extends CI_Controller {
 	public function detail($id){
 		$inquiry = $this->gm->id("inquiry", $id);
 		
-		$incoterms = $aux_incoterms = [];
+		$incoterms = [];
 		$incoterm_ids = explode(",", $inquiry->incoterm_ids);
-		foreach($incoterm_ids as $item){
-			$incoterm = $this->gm->id("incoterm", $item);
-			$incoterms[] = $incoterm;
-			$aux_incoterms[] = $incoterm->incoterm_short;
-		}
-		$inquiry->incoterms = implode(", ", $aux_incoterms);
+		foreach($incoterm_ids as $item) $incoterms[] = $this->gm->id("incoterm", $item);
+		$inquiry->incoterms = $incoterms;
 		
 		$company = $this->gm->id("company", $inquiry->company_id);
 		$company->country = $this->gm->id("country", $company->country_id)->country;
@@ -152,7 +141,7 @@ class Inquiry extends CI_Controller {
 		
 		$f_in = [["field" => "id", "values" => explode(",", $inquiry->person_ids)]];
 		$people = $this->gm->filter("person", null, null, $f_in, "name", "asc");
-		foreach($people as $item) $item->position = $this->gm->id("position", $item->position_id)->position;
+		foreach($people as $item) if ($item->position_id) $item->position = $this->gm->id("position", $item->position_id)->position; else $item->position = "";
 		
 		$data = [
 			"inquiry" => $inquiry,
@@ -169,42 +158,12 @@ class Inquiry extends CI_Controller {
 		$this->load->view('layout', $data);
 	}
 	
-	public function payment_term_save(){
+	public function update_inquiry(){
 		$data = $this->input->post();
 		$data["updated_at"] = date('Y-m-d H:i:s', time());
 		if ($this->gm->update("inquiry", $data["id"], $data)){
 			$type = "success";
-			$msg = "Payment term has been saved.";
-		}else{
-			$type = "error";
-			$msg = "An error occurred. Try again.";
-		}
-			
-		header('Content-Type: application/json');
-		echo json_encode(["type" => $type, "msg" => $msg]);
-	}
-	
-	public function freight_insurance_save(){
-		$data = $this->input->post();
-		$data["updated_at"] = date('Y-m-d H:i:s', time());
-		if ($this->gm->update("inquiry", $data["id"], $data)){
-			$type = "success";
-			$msg = "Freight & insurance cost has been saved.";
-		}else{
-			$type = "error";
-			$msg = "An error occurred. Try again.";
-		}
-			
-		header('Content-Type: application/json');
-		echo json_encode(["type" => $type, "msg" => $msg]);
-	}
-	
-	public function handling_save(){
-		$data = $this->input->post();
-		$data["updated_at"] = date('Y-m-d H:i:s', time());
-		if ($this->gm->update("inquiry", $data["id"], $data)){
-			$type = "success";
-			$msg = "Handling cost has been saved.";
+			$msg = "Inquiry has been updated.";
 		}else{
 			$type = "error";
 			$msg = "An error occurred. Try again.";
@@ -247,6 +206,19 @@ class Inquiry extends CI_Controller {
 		$msg = "Price has been updated.";
 		$this->gm->update_multi("inquiry_product", $this->input->post("prod"), "id");
 		
+		//update sale record if it exists
+		$inquiry_id = $this->input->post("inquiry_id");
+		$sale = $this->gm->filter("sale", ["inquiry_id" => $inquiry_id]);
+		if ($sale){
+			$sale = $sale[0];
+			$products = $this->gm->filter("inquiry_product", ["inquiry_id" => $inquiry_id]);
+			
+			$amount = 0;
+			foreach($products as $item) $amount += $item->unit_price * $item->qty;
+			
+			$this->gm->update("sale", $sale->id, ["amount" => $amount, "updated_at" => date('Y-m-d H:i:s', time())]);
+		}
+		
 		header('Content-Type: application/json');
 		echo json_encode(["type" => $type, "msg" => $msg]);
 	}
@@ -259,13 +231,14 @@ class Inquiry extends CI_Controller {
 		
 		$msg = "";
 		if (!$inquiry->payment_term_id) $msg = $msg."<br/>- Select a payment term.";
+		if (!$inquiry->incoterm_id) $msg = $msg."<br/>- Select a incoterm.";
 		foreach($products as $item){
 			if (!$item->unit_price) $msg = $msg."<br/>- Save product price.";
 			break;
 		}
 		
 		if (!$msg){
-			//create sale record
+			//create or update sale record
 			$amount = 0;
 			foreach($products as $item) $amount += $item->unit_price * $item->qty;
 			
@@ -294,57 +267,5 @@ class Inquiry extends CI_Controller {
 		
 		header('Content-Type: application/json');
 		echo json_encode(["type" => $type, "msg" => $msg, "move_to" => $move_to]);
-	}
-	
-	////////////////////////////
-	public function update(){
-		$data = $this->input->post();
-		$data["updated_at"] = date('Y-m-d H:i:s', time());
-		if ($this->gm->update("product", $data["id"], $data)){
-			$type = "success";
-			$msg = "The product has been updated.";
-		}else{
-			$type = "error";
-			$msg = "An error occurred. Try again.";
-		}
-		
-		header('Content-Type: application/json');
-		echo json_encode(["type" => $type, "msg" => $msg]);
-	}
-	
-	public function add_inc_product(){
-		$type = "error"; $msg = null;
-		$data = $this->input->post();
-		$f_data = $data; unset($f_data["qty"]);
-		
-		if (!$this->gm->filter("product_include", $f_data)){
-			if ($this->gm->insert("product_include", $data)){
-				$msg = "The product has been added to the list.";
-				$type = "success";
-			}else $msg = "Internal error. Please try again.";
-		}else $msg = "The product already exists in the list of included products.";
-		
-		$products = $this->gm->filter("product_include", ["parent_id" => $data["parent_id"]]);
-		foreach($products as $item) $item->product = $this->gm->id("product", $item->product_id)->product;
-		
-		header('Content-Type: application/json');
-		echo json_encode(["type" => $type, "msg" => $msg, "products" => $products]);
-	}
-	
-	public function delete_inc_product(){
-		$inc_product = $this->gm->id("product_include", $this->input->post("id"));
-		if ($this->gm->delete("product_include", ["id" => $inc_product->id])){
-			$type = "success";
-			$msg = "The product has been deleted.";
-		}else{
-			$type = "success";
-			$msg = "An error occurred. Try again.";
-		}
-		
-		$products = $this->gm->filter("product_include", ["parent_id" => $inc_product->parent_id]);
-		foreach($products as $item) $item->product = $this->gm->id("product", $item->product_id)->product;
-		
-		header('Content-Type: application/json');
-		echo json_encode(["type" => $type, "msg" => $msg, "products" => $products]);
 	}
 }

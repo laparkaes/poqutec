@@ -10,11 +10,14 @@
 	<link rel="stylesheet" href="<?= base_url() ?>resources/vendor/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="<?= base_url() ?>resources/vendor/fontawesome/css/all.min.css">
 	<link rel="stylesheet" href="<?= base_url() ?>resources/vendor/sweetalert2-11.4.35/dist/sweetalert2.min.css">
+	<link rel="stylesheet" href="<?= base_url() ?>resources/vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css">
 	<link rel="stylesheet" href="<?= base_url() ?>resources/setting.css">
 	<script src="<?= base_url() ?>resources/vendor/jquery-3.6.4.min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
 	<script src="<?= base_url() ?>resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 	<script src="<?= base_url() ?>resources/vendor/fontawesome/js/all.min.js"></script>
 	<script src="<?= base_url() ?>resources/vendor/sweetalert2-11.4.35/dist/sweetalert2.min.js"></script>
+	<script src="<?= base_url() ?>resources/vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
 	<script src="<?= base_url() ?>resources/setting.js"></script>
 	<?php if ($init){ ?>
 	<script src="<?= base_url() ?>resources/init/<?= $init ?>"></script>
@@ -48,7 +51,7 @@
 			</li>
 			<?php if (!strcmp($this->nav_active, "sale")) $a = "active"; else $a = ""; ?>
 			<li class="nav-item <?= $a ?>">
-				<a class="nav-link" href="#">Sale</a>
+				<a class="nav-link" href="<?= base_url() ?>sale/list">Sale</a>
 			</li>
 			<?php if (!strcmp($this->nav_active, "account")) $a = "active"; else $a = ""; ?>
 			<li class="nav-item <?= $a ?>">

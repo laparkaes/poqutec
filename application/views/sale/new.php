@@ -7,40 +7,24 @@
 	</div>
 </div>
 <div class="row mt-3">
-	<div class="col-md-12">
-		<div class="card mb-3">
+	<div class="col">
+		<div class="card">
 			<div class="card-header d-flex justify-content-between align-items-center">
-				<h5 class="mb-0">Buyer</h5>
+				<h5 class="mb-0">Buyer Information</h5>
 			</div>
 			<div class="card-body">
 				<div class="form-row">
+					<div class="form-group col-md-3">
+						<label>Country</label>
+						<input type="text" class="form-control bg-white" value="<?= $company->country ?>" readonly>
+					</div>
+					<div class="form-group col-md-3">
+						<label>Type</label>
+						<input type="text" class="form-control bg-white" value="<?= $company->type ?>" readonly>
+					</div>
 					<div class="form-group col-md-6">
-						<label><strong>Company</strong></label>
-						<div><?= $company->company ?></div>
-					</div>
-					<div class="form-group col-md-3">
-						<label><strong>Country</strong></label>
-						<div><?= $company->country ?></div>
-					</div>
-					<div class="form-group col-md-3">
-						<label><strong>Type</strong></label>
-						<div><?= $company->type ?></div>
-					</div>
-					<div class="form-group col-md-3">
-						<label><strong>Tel</strong></label>
-						<div><?= $company->tel ?></div>
-					</div>
-					<div class="form-group col-md-3">
-						<label><strong>Fax</strong></label>
-						<div><?= $company->fax ?></div>
-					</div>
-					<div class="form-group col-md-3">
-						<label><strong>Main Email</strong></label>
-						<div><?= $company->main_email ?></div>
-					</div>
-					<div class="form-group col-md-3">
-						<label><strong>Web</strong></label>
-						<div><?= $company->web ?></div>
+						<label>Buyer</label>
+						<input type="text" class="form-control bg-white" value="<?= $company->company ?>" readonly>
 					</div>
 				</div>
 			</div>
@@ -58,7 +42,7 @@
 					<input type="hidden" name="company_id" value="<?= $company->id ?>">
 					<div class="form-row">
 						<div class="form-group col-md-6">
-							<label><strong>Incoterm</strong></label>
+							<label class="mr-5">Incoterm</label>
 							<div class="form-control">
 								<?php foreach($incoterms as $item){ ?>
 								<div class="custom-control custom-checkbox custom-control-inline">
@@ -69,12 +53,12 @@
 							</div>
 						</div>
 						<div class="form-group col-md-6">
-							<label><strong>Arrival Port / Airport</strong></label>
+							<label class="mr-5">Arrival Port</label>
 							<input type="text" class="form-control" name="port">
 						</div>
 						<div class="form-group col-md-12">
-							<label><strong>Person in Charge</strong></label>
-							<table class="table">
+							<label>Person in Charge</label>
+							<table class="table table-sm">
 								<thead>
 									<tr>
 										<th scope="col"></th>
@@ -104,8 +88,8 @@
 							</table>
 						</div>
 						<div class="form-group col-md-12">
-							<label><strong>Product List</strong></label>
-							<table class="table">
+							<label>Products</label>
+							<table class="table table-sm">
 								<thead>
 									<tr>
 										<th scope="col">Category</th>

@@ -65,7 +65,7 @@
 				</div>
 			</div>
 			<div class="card-body" style="height: 300px; overflow-y: auto;">
-				<table class="table table-sm">
+				<table class="table mb-0">
 					<thead>
 						<tr>
 							<th scope="col">Product</th>
