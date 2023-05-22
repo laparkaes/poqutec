@@ -157,24 +157,4 @@ $(document).ready(function() {
 	$("#form_add_package").submit(function(e) {e.preventDefault(); add_package(this);});
 	$(".btn_delete_package").on('click',(function(e) {delete_package($(this).val());}));
 	$(".c_vol").on("keyup", function() {calculate_volume();});
-	
-	
-	
-	////////////////////end here
-	
-	//new
-	$("#form_add_inquiry").submit(function(e) {e.preventDefault(); add_inquiry(this);});
-	$("#sl_add_inq_category").change(function() {load_products($(this).val());});
-	
-	
-	//detail
-	$("#form_update_price").submit(function(e) {e.preventDefault(); update_price(this);});
-	$("#btn_payment_term_save").on('click',(function(e) {payment_term_save();}));
-	$("#btn_freight_insurance_save").on('click',(function(e) {freight_insurance_save();}));
-	$("#btn_handling_save").on('click',(function(e) {handling_save();}));
-	$(".prod_uprice").on("focus", function() {load_price_history(this);});
-	$(".prod_uprice").on("keyup", function() {set_subtotal(this);});
-	$(".prod_uprice").change(function() {set_subtotal(this);});
-	$("#btn_make_proforma").on('click',(function(e) {make_proforma($(this).val());}));
-	$("#btn_confirm_sale").on('click',(function(e) {confirm_sale($(this).val());}));
 });

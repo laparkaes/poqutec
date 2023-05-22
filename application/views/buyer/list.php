@@ -33,6 +33,7 @@
 </div>
 <div class="row">
 	<div class="col">
+		<?php if ($buyers){ ?>
 		<div class="table-responsive-sm">
 			<table class="table">
 				<thead>
@@ -69,6 +70,9 @@
 				</tbody>
 			</table>
 		</div>
+		<?php }else{ ?>
+		<p class="text-center text-muted mt-3">No result with keyword.</p>
+		<?php } ?>
 		<div class="btn-group" role="group" aria-label="paging">
 			<?php foreach($pages as $p){
 			$filter_url["page"] = $p[0]; ?>

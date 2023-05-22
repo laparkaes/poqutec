@@ -27,12 +27,9 @@ class Sale extends CI_Controller {
 			$buyer_ids = [];
 			$buyers = $this->gm->filter("company", null, ["company" => $filter_url["buyer"]]);
 			foreach($buyers as $item) $buyer_ids[] = $item->id;
+			if (!$buyer_ids) $buyer_ids = [-1];
 			
-			$inquiry_ids = [];
-			$inquiries = $this->gm->filter("inquiry", null, null, [["field" => "company_id", "values" => $buyer_ids]]);
-			foreach($inquiries as $item) $inquiry_ids[] = $item->id;
-			
-			$f_w_in[] = ["field" => "inquiry_id", "values" => $inquiry_ids];
+			$f_w_in[] = ["field" => "buyer_id", "values" => $buyer_ids];
 		}
 		
 		$sales = $this->gm->filter("sale", $f_w, $f_l, $f_w_in, "updated_at", "desc", 25, ($page-1)*25);
@@ -46,11 +43,6 @@ class Sale extends CI_Controller {
 			
 			if ($item->etd) $item->etd = date("Y-m-d", strtotime($item->etd)); else $item->etd = "-";
 			if ($item->eta) $item->eta = date("Y-m-d", strtotime($item->eta)); else $item->eta = "-";
-			
-			$aux = [];
-			if ($item->bl) $aux[] = $item->bl;
-			if ($item->awb) $aux[] = $item->awb;
-			if ($aux) $item->bl_awb = implode(" / ", $aux); else $item->bl_awb = "-";
 		}
 		
 		$view = [
@@ -177,131 +169,5 @@ class Sale extends CI_Controller {
 		
 		header('Content-Type: application/json');
 		echo json_encode(["type" => $type, "msg" => $msg]);
-	}
-	
-	/////////////////////////// end here
-	public function freight_insurance_save(){
-		$data = $this->input->post();
-		$data["updated_at"] = date('Y-m-d H:i:s', time());
-		if ($this->gm->update("inquiry", $data["id"], $data)){
-			$type = "success";
-			$msg = "Freight & insurance cost has been saved.";
-		}else{
-			$type = "error";
-			$msg = "An error occurred. Try again.";
-		}
-			
-		header('Content-Type: application/json');
-		echo json_encode(["type" => $type, "msg" => $msg]);
-	}
-	
-	public function handling_save(){
-		$data = $this->input->post();
-		$data["updated_at"] = date('Y-m-d H:i:s', time());
-		if ($this->gm->update("inquiry", $data["id"], $data)){
-			$type = "success";
-			$msg = "Handling cost has been saved.";
-		}else{
-			$type = "error";
-			$msg = "An error occurred. Try again.";
-		}
-			
-		header('Content-Type: application/json');
-		echo json_encode(["type" => $type, "msg" => $msg]);
-	}
-	
-	public function load_price_history(){
-		$inq_prod = $this->gm->id("inquiry_product", $this->input->post("inq_prod_id"));
-		$inquiry = $this->gm->id("inquiry", $inq_prod->inquiry_id);
-		$inquiries = $this->gm->filter("inquiry", ["company_id" => $inquiry->company_id], null, null, "registed_at", "desc");
-		
-		$products = [];
-		$f_w = ["product_id" => $inq_prod->product_id];
-		foreach($inquiries as $item){
-			$f_w["inquiry_id"] = $item->id;
-			$inq_product = $this->gm->filter("inquiry_product", $f_w, null, null, null, null, 0, 10);
-			foreach($inq_product as $p){
-				if ($inquiry->id != $p->inquiry_id){
-					$p->unit_price = number_format($p->unit_price, 2);
-					$p->registed_at = date("Y-m-d", strtotime($item->registed_at));
-					$products[] = $p;	
-				}
-			}
-			usort($inq_product, function($a, $b) { return (strtotime($a->registed_at) - strtotime($b->registed_at));});
-		}
-		
-		$product = $this->gm->id("product", $inq_prod->product_id);
-		$product->price = number_format($product->price, 2);
-		
-		
-		header('Content-Type: application/json');
-		echo json_encode(["product" => $product, "products" => $products]);
-	}
-	
-	public function update_price(){
-		$type = "success";
-		$msg = "Price has been updated.";
-		$this->gm->update_multi("inquiry_product", $this->input->post("prod"), "id");
-		
-		//update sale record if it exists
-		$inquiry_id = $this->input->post("inquiry_id");
-		$sale = $this->gm->filter("sale", ["inquiry_id" => $inquiry_id]);
-		if ($sale){
-			$sale = $sale[0];
-			$products = $this->gm->filter("inquiry_product", ["inquiry_id" => $inquiry_id]);
-			
-			$amount = 0;
-			foreach($products as $item) $amount += $item->unit_price * $item->qty;
-			
-			$this->gm->update("sale", $sale->id, ["amount" => $amount, "updated_at" => date('Y-m-d H:i:s', time())]);
-		}
-		
-		header('Content-Type: application/json');
-		echo json_encode(["type" => $type, "msg" => $msg]);
-	}
-	
-	public function confirm_sale(){
-		$type = "error"; $msg = ""; $move_to = null;
-		
-		$inquiry = $this->gm->id("inquiry", $this->input->post("id"));
-		$products = $this->gm->filter("inquiry_product", ["inquiry_id" => $inquiry->id], null, null, "unit_price", "desc");
-		
-		$msg = "";
-		if (!$inquiry->payment_term_id) $msg = $msg."<br/>- Select a payment term.";
-		foreach($products as $item){
-			if (!$item->unit_price) $msg = $msg."<br/>- Save product price.";
-			break;
-		}
-		
-		if (!$msg){
-			//create or update sale record
-			$amount = 0;
-			foreach($products as $item) $amount += $item->unit_price * $item->qty;
-			
-			$sale_data = [
-				"amount" => $amount,
-				"inquiry_id" => $inquiry->id,
-				"updated_at" => date('Y-m-d H:i:s', time()),
-			];
-			
-			$sale = $this->gm->filter("sale", ["inquiry_id" => $inquiry->id]);
-			if ($sale){
-				$sale = $sale[0];
-				$this->gm->update("sale", $sale->id, $sale_data);
-				$sale_id = $sale->id;
-			}else{
-				$sale_data["registed_at"] = date('Y-m-d H:i:s', time());
-				$sale_id = $this->gm->insert("sale", $sale_data);
-			}
-			
-			if ($sale_id){
-				$type = "success";
-				$msg = "New sale has been registered";
-				$move_to = base_url()."sale/detail/".$sale_id;
-			}else $msg = "Internal error. Please try again.";
-		}else $msg = "An error occurred.".$msg;
-		
-		header('Content-Type: application/json');
-		echo json_encode(["type" => $type, "msg" => $msg, "move_to" => $move_to]);
 	}
 }

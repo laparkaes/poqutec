@@ -23,7 +23,7 @@ class General_model extends CI_Model{
 		if ($like){ $this->db->group_start(); $this->db->or_like($like); $this->db->group_end(); }
 		if ($filter_in){
 			$this->db->group_start();
-			foreach($filter_in as $f) $this->db->where_in($f["field"], $f["values"]);
+			foreach($filter_in as $f) if ($f["values"]) $this->db->where_in($f["field"], $f["values"]);
 			$this->db->group_end();
 		}
 		if ($order_by) $this->db->order_by($order_by, $order);

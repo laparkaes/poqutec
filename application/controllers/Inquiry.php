@@ -26,6 +26,8 @@ class Inquiry extends CI_Controller {
 			$buyer_ids = [];
 			$buyers = $this->gm->filter("company", null, ["company" => $filter_url["buyer"]]);
 			foreach($buyers as $item) $buyer_ids[] = $item->id;
+			if (!$buyer_ids) $buyer_ids = [-1];
+			
 			$f_w_in[] = ["field" => "company_id", "values" => $buyer_ids];
 		}
 		
@@ -244,6 +246,7 @@ class Inquiry extends CI_Controller {
 			
 			$sale_data = [
 				"amount" => $amount,
+				"buyer_id" => $inquiry->buyer_id,
 				"inquiry_id" => $inquiry->id,
 				"updated_at" => date('Y-m-d H:i:s', time()),
 			];

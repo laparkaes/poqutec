@@ -55,7 +55,7 @@
 			</li>
 			<?php if (!strcmp($this->nav_active, "account")) $a = "active"; else $a = ""; ?>
 			<li class="nav-item <?= $a ?>">
-				<a class="nav-link" href="#">Account</a>
+				<a class="nav-link" href="<?= base_url() ?>account/list">Account</a>
 			</li>
 		</ul>
 		<form class="form-inline my-2 my-lg-0">

@@ -240,8 +240,8 @@
 </div>
 <div class="row mt-5">
 	<div class="col-md-12 text-center">
-		<button type="button" class="btn btn-primary btn-lg" id="btn_make_proforma" value="<?= $inquiry->id ?>">Make Proforma</button>
-		<button type="button" class="btn btn-success btn-lg" id="btn_confirm_sale" value="<?= $inquiry->id ?>">Confirm Sale</button>
+		<button type="button" class="btn btn-primary btn-lg" id="btn_packing_list" value="<?= $sale->id ?>">Packing List</button>
+		<button type="button" class="btn btn-primary btn-lg" id="btn_commercial_invoice" value="<?= $sale->id ?>">Commercial Invoice</button>
 	</div>
 </div>
 
@@ -313,6 +313,8 @@
 												<span class="input-group-text">/ <?= $item_qty ?></span>
 											</div>
 										</div>
+										<?php }else{ ?>
+										<div class="text-success">Finished</div>
 										<?php } ?>
 								</tr>
 								<?php } ?>
