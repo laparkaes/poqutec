@@ -58,10 +58,10 @@
 				<a class="nav-link" href="<?= base_url() ?>account/list">Account</a>
 			</li>
 		</ul>
-		<form class="form-inline my-2 my-lg-0">
-			<input class="form-control mr-sm-2" type="search" placeholder="Buyer quick search" aria-label="Search">
-			<button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
-		</form>
+		<span class="badge badge-info"><?= $this->session->userdata('username'); ?></span>
+		<div class="my-2 my-lg-0 text-right">
+			<button class="btn btn-outline-danger border-0 my-2 my-sm-0" id="btn_logout"><i class="fas fa-sign-out"></i></button>
+		</div>
 	</div>
 </nav>
 <div class="container mt-3 pb-5"><?php $this->load->view($main); ?></div>

@@ -47,9 +47,9 @@
 						<td><?= $item->eta ?></td>
 						<td><?= date("Y-m-d", strtotime($item->updated_at)) ?></td>
 						<td><?= date("Y-m-d", strtotime($item->registed_at)) ?></td>
-						<td>
+						<td class="text-right">
 							<a href="<?= base_url() ?>sale/detail/<?= $item->id ?>">
-								>>
+								<i class="fas fa-search"></i>
 							</a>
 						</td>
 					</tr>

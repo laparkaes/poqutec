@@ -42,9 +42,9 @@
 						<td><?= $item->person->position ?></td>
 						<td><?= $item->person->mobile ?></td>
 						<td><?= $item->registed_at ?></td>
-						<td>
+						<td class="text-right">
 							<a href="<?= base_url() ?>account/detail/<?= $item->id ?>">
-								>>
+								<i class="fas fa-search"></i>
 							</a>
 						</td>
 					</tr>

@@ -6,6 +6,8 @@ class Sale extends CI_Controller {
 	public function __construct(){
 		parent::__construct();
 		date_default_timezone_set('Asia/Seoul');
+		
+		if (!$this->session->userdata('username')) redirect("/");
 		$this->load->model('general_model','gm');
 		$this->load->library('my_func');
 		$this->nav_active = "sale";

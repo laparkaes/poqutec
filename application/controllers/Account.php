@@ -30,8 +30,13 @@ class Account extends CI_Controller {
 		
 		$accounts = $this->gm->filter("account", $f_where, $f_like, $f_where_in, "registed_at", "desc", 25, ($page-1)*25);
 		foreach($accounts as $item){
-			$item->person = $this->gm->id("person", $item->person_id);
-			if ($item->person->position_id) $item->person->position = $this->gm->id("position", $item->person->position_id)->position; else $item->person->position = "";
+			if ($item->person_id){
+				$item->person = $this->gm->id("person", $item->person_id);
+				if ($item->person->position_id) $item->person->position = $this->gm->id("position", $item->person->position_id)->position; else $item->person->position = "";
+			}else{
+				$item->person = $this->gm->structure("person");
+				$item->person->position = "";
+			}
 		}
 		
 		$view = [
@@ -96,6 +101,7 @@ class Account extends CI_Controller {
 	public function detail($id){
 		$account = $this->gm->id("account", $id);
 		$person = $this->gm->id("person", $account->person_id);
+		if (!$person) $person = $this->gm->structure("person");
 		if ($person->position_id) $person->position = $this->gm->id("position", $person->position_id)->position;
 		else $person->position = "";
 		
@@ -123,7 +129,14 @@ class Account extends CI_Controller {
 				unset($p["position"]);	
 			}
 			
-			if ($this->gm->update("person", $p["id"], $p)){
+			if ($p["id"]){
+				$this->gm->update("person", $p["id"], $p);
+				$person_id = $p["id"];
+			}else $person_id = $this->gm->insert("person", $p);
+			
+			if ($person_id){
+				$this->gm->update("account", $a["id"], ["person_id" => $person_id]);
+				
 				$type ="success";
 				$msg = "Account has been updated.";
 				

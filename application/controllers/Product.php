@@ -6,6 +6,8 @@ class Product extends CI_Controller {
 	public function __construct(){
 		parent::__construct();
 		date_default_timezone_set('Asia/Seoul');
+		
+		if (!$this->session->userdata('username')) redirect("/");
 		$this->load->model('general_model','gm');
 		$this->load->library('my_func');
 		$this->nav_active = "product";
@@ -36,7 +38,7 @@ class Product extends CI_Controller {
 			"pages" => $this->my_func->set_page($page, $this->gm->counter("product", $f_where, $f_like)),
 			"categories" => $categories,
 			"categories_arr" => $categories_arr,
-			"products" => $this->gm->filter("product", $f_where, $f_like, null, "updated_at", "desc", 25, ($page-1)*25),
+			"products" => $this->gm->filter("product", $f_where, $f_like, null, "id", "asc", 25, ($page-1)*25),
 			"main" => "product/list",
 			"init" => $this->js_init
 		];

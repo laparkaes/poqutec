@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="col">
-		<h4>Products</h4>
+		<h4>Inquiries</h4>
 	</div>
 </div>
 <div class="row mt-3">
@@ -41,9 +41,9 @@
 						<td><?= number_format($item->item_qty) ?></td>
 						<td><i class="fas fa-circle text-<?= $item->sale ?>"></i></td>
 						<td><?= $item->updated_at ?></td>
-						<td>
+						<td class="text-right">
 							<a href="<?= base_url() ?>inquiry/detail/<?= $item->id ?>">
-								>>
+								<i class="fas fa-search"></i>
 							</a>
 						</td>
 					</tr>

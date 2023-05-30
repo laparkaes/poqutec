@@ -47,9 +47,9 @@
 						<td><?= $item->product ?></td>
 						<td>USD <?= number_format($item->price, 2) ?></td>
 						<td><?= $item->updated_at ?></td>
-						<td>
+						<td class="text-right">
 							<a href="<?= base_url() ?>product/detail/<?= $item->id ?>">
-								>>
+								<i class="fas fa-search"></i>
 							</a>
 						</td>
 					</tr>

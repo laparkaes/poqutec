@@ -6,6 +6,8 @@ class Inquiry extends CI_Controller {
 	public function __construct(){
 		parent::__construct();
 		date_default_timezone_set('Asia/Seoul');
+		
+		if (!$this->session->userdata('username')) redirect("/");
 		$this->load->model('general_model','gm');
 		$this->load->library('my_func');
 		$this->nav_active = "inquiry";
@@ -246,7 +248,7 @@ class Inquiry extends CI_Controller {
 			
 			$sale_data = [
 				"amount" => $amount,
-				"buyer_id" => $inquiry->buyer_id,
+				"buyer_id" => $inquiry->company_id,
 				"inquiry_id" => $inquiry->id,
 				"updated_at" => date('Y-m-d H:i:s', time()),
 			];

@@ -60,9 +60,9 @@
 						<td><?= $item->web ?></td>
 						<td><?= $item->tel ?></td>
 						<td><?= $item->updated_at ?></td>
-						<td>
+						<td class="text-right">
 							<a href="<?= base_url() ?>buyer/detail/<?= $item->id ?>">
-								>>
+								<i class="fas fa-search"></i>
 							</a>
 						</td>
 					</tr>

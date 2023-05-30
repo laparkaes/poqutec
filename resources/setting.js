@@ -16,7 +16,7 @@ function swal_redirection(type, msg, move_to){
 	});
 }
 
-function ajax_form(dom, url, redirection){
+function ajax_form(dom, url){
 	var deferred = $.Deferred();
 	$.ajax({
 		url: $("#base_url").val() + url,
@@ -92,6 +92,12 @@ function nf(num){//number format
 	return parseFloat(num).toLocaleString('es-US', {maximumFractionDigits: 2, minimumFractionDigits: 2});
 }
 
+function logout(){
+	ajax_simple_warning({id: 1}, "auth/logout", "Are you sure you wish to log out?").done(function(res) {
+		swal_redirection(res.type, res.msg, res.move_to);
+	});
+}
+
 $(document).ready(function() {
-	
+	$("#btn_logout").on('click',(function(e) {logout();}));
 });

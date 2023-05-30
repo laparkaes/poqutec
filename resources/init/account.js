@@ -13,17 +13,6 @@ function set_account_update_form(is_edit){
 	}
 }
 
-function person_reload(company_id){
-	ajax_simple({company_id:company_id}, "buyer/load_people").done(function(res) {
-		var dom_set;
-		$("#tb_people").html("");
-		$.each(res, function(index, item) {
-			$("#tb_people").append('<tr><th scope="row">' + (index + 1) + '</th><td>' + item.name + '</td><td>' + item.position + '</td><td>' + item.mobile + '</td><td>' + item.email + '</td><td>' + item.registed_at + '</td><td class="text-right"><button type="button" class="btn btn-danger btn-sm btn_person_delete" value="' + item.id + '"><i class="fas fa-trash-alt"></i></button></td></tr>');
-		});
-		$(".btn_person_delete").on('click',(function(e) {person_delete($(this).val());}));
-	});
-}
-
 function account_register(dom){
 	ajax_form(dom, "account/register").done(function(res) {
 		swal_redirection(res.type, res.msg, res.move_to);
