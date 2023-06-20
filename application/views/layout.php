@@ -33,6 +33,7 @@
 	</button>
 	<div class="collapse navbar-collapse" id="navbarSupportedContent">
 		<ul class="navbar-nav mr-auto">
+			<!--
 			<?php if (!strcmp($this->nav_active, "dashboard")) $a = "active"; else $a = ""; ?>
 			<li class="nav-item <?= $a ?>">
 				<a class="nav-link" href="<?= base_url() ?>dashboard">Home</a>
@@ -41,10 +42,12 @@
 			<li class="nav-item <?= $a ?>">
 				<a class="nav-link" href="<?= base_url() ?>product/list">Product</a>
 			</li>
+			-->
 			<?php if (!strcmp($this->nav_active, "buyer")) $a = "active"; else $a = ""; ?>
 			<li class="nav-item <?= $a ?>">
 				<a class="nav-link" href="<?= base_url() ?>buyer/list">Buyer</a>
 			</li>
+			<!--
 			<?php if (!strcmp($this->nav_active, "inquiry")) $a = "active"; else $a = ""; ?>
 			<li class="nav-item <?= $a ?>">
 				<a class="nav-link" href="<?= base_url() ?>inquiry/list">Inquiry</a>
@@ -53,14 +56,15 @@
 			<li class="nav-item <?= $a ?>">
 				<a class="nav-link" href="<?= base_url() ?>sale/list">Sale</a>
 			</li>
+			-->
 			<?php if (!strcmp($this->nav_active, "account")) $a = "active"; else $a = ""; ?>
 			<li class="nav-item <?= $a ?>">
 				<a class="nav-link" href="<?= base_url() ?>account/list">Account</a>
 			</li>
 		</ul>
-		<span class="badge badge-info"><?= $this->session->userdata('username'); ?></span>
+		<span class="badge badge-info mr-1"><?= $this->session->userdata('username'); ?></span>
 		<div class="my-2 my-lg-0 text-right">
-			<button class="btn btn-outline-danger border-0 my-2 my-sm-0" id="btn_logout"><i class="fas fa-sign-out"></i></button>
+			<button class="btn btn-outline-danger btn-sm border-0 my-2 my-sm-0" id="btn_logout"><i class="fas fa-sign-out"></i></button>
 		</div>
 	</div>
 </nav>

@@ -10,10 +10,10 @@ class My_func{
 		//$this->CI->load->model('general_model','general');
 	}
 	
-	public function set_page($page, $qty){
+	public function set_page($page, $qty, $item_per_page = 25){
 		$pages = [];
 		if ($qty){
-			$last = floor($qty / 25); if ($qty % 25) $last++;
+			$last = floor($qty / $item_per_page); if ($qty % $item_per_page) $last++;
 			if (3 < $page) $pages[] = [1, "<<", "outline-primary"];
 			if (3 < $page) $pages[] = [$page-3, "...", "outline-primary"];
 			if (2 < $page) $pages[] = [$page-2, $page-2, "outline-primary"];

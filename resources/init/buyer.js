@@ -56,6 +56,39 @@ function person_delete(person_id){
 	});
 }
 
+function note_load(company_id, page){
+	ajax_simple({company_id:company_id, page:page, keyword: $("#ip_note_keyword").val()}, "buyer/note_load").done(function(res) {
+		$("#tb_notes_body").html(res);
+		$(".btn_note_page").on('click',(function(e) {note_load($("#company_id").val(), $(this).val());}));
+		$("#btn_search_note").on('click',(function(e) {note_load($("#company_id").val(), 1);}));
+		$('#ip_note_keyword').keyup(function(event) {
+			if (event.keyCode === 13 || event.which === 13) note_load($("#company_id").val(), 1);
+		});
+		
+		$(".btn_note_delete").on('click',(function(e) {note_delete($(this).val());}));
+	});
+}
+
+function note_add(dom){
+	ajax_form(dom, "buyer/note_add").done(function(res) {
+		swal(res.type, res.msg);
+		if (res.type == "success"){
+			$('#ip_note_keyword').val("");
+			note_load($("#company_id").val(), 1);
+			document.getElementById("form_note_add").reset();
+			$('#md_note_add').modal('hide');
+		}
+	});
+}
+
+function note_delete(id){
+	ajax_simple_warning({id:id}, "buyer/note_delete", "Are you sure to delete?").done(function(res) {
+		swal(res.type, res.msg);
+		$('#ip_note_keyword').val("");
+		note_load($("#company_id").val(), 1);
+	});
+}
+
 $(document).ready(function() {
 	//register
 	$("#form_buyer_register").submit(function(e) {e.preventDefault(); buyer_register(this);});
@@ -64,6 +97,10 @@ $(document).ready(function() {
 	$("#form_buyer_update").submit(function(e) {e.preventDefault(); buyer_update(this);});
 	$("#btn_buyer_edit").on('click',(function(e) {set_buyer_update_form(true);}));
 	$("#btn_buyer_edit_cancel").on('click',(function(e) {set_buyer_update_form(false);}));
+	
+	//detail - note
+	$("#form_note_add").submit(function(e) {e.preventDefault(); note_add(this);});
+	note_load($("#company_id").val(), 1);
 	
 	//detail - person
 	$("#form_person_register").submit(function(e) {e.preventDefault(); person_register(this);});

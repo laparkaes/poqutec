@@ -71,6 +71,15 @@
 	<div class="col-md-12">
 		<div class="card mb-3">
 			<div class="card-header d-flex justify-content-between align-items-center">
+				<h5 class="mb-0">Notes</h5>
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#md_note_add">Add</button>
+			</div>
+			<div class="card-body" id="tb_notes_body"></div>
+		</div>
+	</div>
+	<div class="col-md-12">
+		<div class="card mb-3">
+			<div class="card-header d-flex justify-content-between align-items-center">
 				<h5 class="mb-0">People</h5>
 				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#md_person_add">Add</button>
 			</div>
@@ -109,6 +118,7 @@
 		</div>	
 	</div>
 </div>
+<!--
 <div class="row">
 	<div class="col-md-6 col-sm-12">
 		<div class="card">
@@ -148,8 +158,8 @@
 		sales
 	</div>
 </div>
+-->
 <input type="hidden" id="company_id" value="<?= $buyer->id ?>">
-
 
 <!-- modal - person add -->
 <div class="modal fade" id="md_person_add" tabindex="-1" role="dialog" aria-labelledby="md_person_addLabel" aria-hidden="true">
@@ -179,6 +189,48 @@
 					<div class="form-group">
 						<label for="person_email">Email</label>
 						<input type="email" class="form-control" id="person_email" name="email">
+					</div>
+					<div class="pt-3">
+						<button type="submit" class="btn btn-primary">Add</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- modal - note add -->
+<div class="modal fade" id="md_note_add" tabindex="-1" role="dialog" aria-labelledby="md_note_addLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="md_note_addLabel">Add Note</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="form_note_add">
+					<div class="form-row">
+						<input type="hidden" name="company_id" value="<?= $buyer->id ?>">
+						<div class="form-group col-md-6">
+							<label for="content">Date</label>
+							<input class="form-control" value="<?= date("Y-m-d") ?>" readonly>
+						</div>
+						<div class="form-group col-md-6">
+							<label for="content">Type</label>
+							<select class="custom-select" name="type_id">
+								<option selected>Choose...</option>
+								<?php foreach($note_types as $item){ ?>
+								<option value="<?= $item->id ?>"><?= $item->note_type ?></option>
+								<?php } ?>
+							</select>
+						</div>
+						<div class="form-group col-md-12">
+							<label for="content">Content</label>
+							<textarea class="form-control" name="content" rows="5" required></textarea>
+						</div>
 					</div>
 					<div class="pt-3">
 						<button type="submit" class="btn btn-primary">Add</button>

@@ -37,10 +37,16 @@
 								<input type="password" class="form-control" id="inp_pass" name="password" required>
 							</div>
 						</div>
-						<div class="d-flex justify-content-between mt-3">
-							<button type="submit" class="btn btn-primary">Access</button>
-							<?php if (!$this->gm->all("account", null, null, null, 1, 0)){ ?>
-							<button type="button" class="btn btn-outline-success" id="btn_first_account">Create First Account</button>
+						<div class="mt-3">
+							<?php if ($this->gm->all("account", null, null, null, 1, 0)){ ?>
+							<div><button type="submit" class="btn btn-primary">Access</button></div>
+							<?php }else{ ?>
+							<div>
+								<button type="button" class="btn btn-outline-success" id="btn_first_account">
+									Create First Account
+								</button>
+							</div>
+							<div class="text-info mt-1">Enter email without password to create first account.</div>
 							<?php } ?>
 						</div>
 					</form>

@@ -105,6 +105,7 @@ class Buyer extends CI_Controller {
 			"inquiries" => $inquiries,
 			"countries" => $this->gm->all("country", "country", "asc"),
 			"types" => $this->gm->all("type", "type", "asc"),
+			"note_types" => $this->gm->all("company_note_type", "note_type", "asc"),
 			"main" => "buyer/detail",
 			"init" => $this->js_init
 		];
@@ -173,6 +174,76 @@ class Buyer extends CI_Controller {
 		
 		header('Content-Type: application/json');
 		echo json_encode($people);
+	}
+	
+	public function set_notes($company_id, $page, $keyword){
+		$f = ["company_id" => $company_id];
+		$f_l = ["content" => $keyword];
+		
+		$notes = $this->gm->filter("company_note", $f, $f_l, null, "registed_at", "desc", 5, 5 * ($page - 1));
+		foreach($notes as $item){
+			if ($item->type_id) $item->type = $this->gm->id("company_note_type", $item->type_id)->note_type;
+			else $item->type = "";
+			
+			$item->person = $this->gm->structure("person");
+			$account = $this->gm->id("account", $item->account_id);
+			if ($account)
+				if ($account->person_id)
+					$item->person = $this->gm->id("person", $account->person_id);
+		}
+		
+		$total = $this->gm->counter("company_note", $f, $f_l);
+		
+		$data = [
+			"keyword" => $keyword,
+			"notes" => $notes,
+			"total" => $total,
+			"page" => $page,
+			"pages" => $this->my_func->set_page($page, $total, 5),
+		];
+		
+		return $this->load->view('buyer/notes', $data, true);
+	}
+	
+	public function note_add(){
+		$type = "error"; $msg = null;
+		$data = $this->input->post();
+		
+		$account = $this->gm->filter("account", ["username" => $this->session->userdata('username')]);
+		if ($account){
+			$data["account_id"] = $account[0]->id;
+			$data["registed_at"] = date('Y-m-d H:i:s', time());
+			if ($this->gm->insert("company_note", $data)){
+				$type = "success";
+				$msg = "New note has been registered.";
+			}else $msg = "An error occurred. Try again.";
+		}else $msg = "Your session is expired. Login again.";
+		
+		header('Content-Type: application/json');
+		echo json_encode(["type" => $type, "msg" => $msg]);
+	}
+	
+	public function note_delete(){
+		$type = "error"; $msg = null;
+		
+		$note = $this->gm->id("company_note", $this->input->post("id"));
+		$account = $this->gm->filter("account", ["username" => $this->session->userdata('username')]);
+		
+		if ($account){
+			if ($account[0]->id == $note->account_id){
+				if ($this->gm->delete("company_note", ["id" => $note->id])){
+					$type = "success";
+					$msg = "Note has been deleted.";
+				}else $msg = "An error occurred. Try again.";
+			}else $msg = "Only the notes you have created can be deleted.";
+		}else $msg = "Your session is finished. Login again.";
+		
+		header('Content-Type: application/json');
+		echo json_encode(["type" => $type, "msg" => $msg]);
+	}
+	
+	public function note_load(){
+		echo $this->set_notes($this->input->post("company_id"), $this->input->post("page"), $this->input->post("keyword"));
 	}
 	
 	function randomString($characters, $length = 20) {

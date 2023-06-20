@@ -1,6 +1,6 @@
 function login(dom){
 	ajax_form(dom, "auth/login").done(function(res) {
-		if (res.type == "success") location.href = "dashboard";
+		if (res.type == "success") location.href = "buyer/list";
 		else swal(res.type, res.msg);
 	});
 }
@@ -14,7 +14,7 @@ function first_account(){
 		
 		if (validEmail){
 			ajax_simple_warning({username: username}, "auth/first_account", username + " will be created with<br/>Pasword: 123456").done(function(res) {
-				swal(res.type, res.msg);
+				swal_redirection(res.type, res.msg, "auth");
 			});
 		}else swal("error", "Enter valid email format.");
 	}else swal("error", "Enter an email.");
